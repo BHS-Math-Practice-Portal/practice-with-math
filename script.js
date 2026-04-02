@@ -96,10 +96,15 @@ function showView(viewName) {
 }
 
 function showGrades() {
-
-document.getElementById('nav-back-grades').classList.add('hidden');
-document.getElementById('nav-back-topics').classList.add('hidden');
-    const grades = [...new Set(allQuestions.map(q => q.Grade))].filter(Boolean).sort((a, b) => a - b);    
+    document.getElementById('nav-back-grades').classList.add('hidden');
+    document.getElementById('nav-back-topics').classList.add('hidden');
+    
+    // We added a new filter here to explicitly exclude '9' and '10'
+    const grades = [...new Set(allQuestions.map(q => q.Grade))]
+        .filter(Boolean)
+        .filter(grade => String(grade) !== '9' && String(grade) !== '10') 
+        .sort((a, b) => a - b);    
+        
     const container = document.getElementById('grade-buttons');
     container.innerHTML = '';
 
