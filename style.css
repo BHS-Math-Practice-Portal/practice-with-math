@@ -1,0 +1,99 @@
+/* Custom Math Background (Subtle Graph Paper Effect) */
+body {
+    background-color: #f0f4f8;
+    background-image: 
+        linear-gradient(rgba(14, 80, 150, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(14, 80, 150, 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+/* Optional: Add a subtle shadow to your main app container to make it pop against the graph paper */
+#app-container {
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    border: 1px solid #e2e8f0;
+}
+
+/* Smooth transitions for all buttons */
+button { 
+    transition: all 0.2s ease-in-out; 
+}
+
+/* Option button hover effect */
+.option-btn:hover {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+/* Smooth transitions for all buttons */
+button { 
+    transition: all 0.2s ease-in-out; 
+}
+
+/* Optional: Add a slight shadow to the option buttons on hover */
+.option-btn:hover {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+/* --- Floating Math Symbols --- */
+.math-bg-symbols {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1; /* Keeps them behind your main white container */
+    pointer-events: none; /* Prevents them from blocking mouse clicks */
+}
+
+.symbol {
+    position: absolute;
+    color: #0e5096; /* Matches your Baroda High School logo blue */
+    opacity: 0.1; /* Very faint so it isn't distracting */
+    font-weight: bold;
+    font-family: sans-serif;
+    animation: floatUp 15s linear infinite;
+}
+
+/* --- Floating Math Symbols --- */
+.math-bg-symbols {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1; 
+    pointer-events: none; 
+}
+
+.symbol {
+    position: absolute;
+    color: #0e5096; /* Matches your Baroda High School logo blue */
+    opacity: 0.1; /* Keeps them faint */
+    font-weight: bold;
+    font-family: sans-serif;
+    animation: floatUp linear infinite;
+}
+
+/* Increased sizes, scattered positions, and staggered delays for 12 symbols */
+.s1 { left: 5%; font-size: 7rem; animation-duration: 25s; }
+.s2 { left: 80%; font-size: 11rem; animation-duration: 30s; animation-delay: 2s; }
+.s3 { left: 25%; font-size: 9rem; animation-duration: 22s; animation-delay: 5s; }
+.s4 { left: 70%; font-size: 6rem; animation-duration: 28s; animation-delay: 1s; }
+.s5 { left: 45%; font-size: 10rem; animation-duration: 26s; animation-delay: 8s; }
+.s6 { left: 90%; font-size: 8rem; animation-duration: 20s; animation-delay: 4s; }
+.s7 { left: 15%; font-size: 12rem; animation-duration: 32s; animation-delay: 7s; }
+.s8 { left: 55%; font-size: 9rem; animation-duration: 24s; animation-delay: 12s; }
+.s9 { left: 35%; font-size: 7rem; animation-duration: 27s; animation-delay: 3s; }
+.s10 { left: 85%; font-size: 10rem; animation-duration: 29s; animation-delay: 9s; }
+.s11 { left: 65%; font-size: 8rem; animation-duration: 23s; animation-delay: 15s; }
+.s12 { left: 10%; font-size: 6rem; animation-duration: 21s; animation-delay: 11s; }
+
+/* The Keyframe Animation */
+@keyframes floatUp {
+    0% {
+        transform: translateY(110vh) rotate(0deg);
+    }
+    100% {
+        transform: translateY(-20vh) rotate(360deg);
+    }
+}

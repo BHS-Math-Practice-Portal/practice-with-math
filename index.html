@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baroda High School - Math Portal Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes scroll-up {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-50%); }
+        }
+        @keyframes scroll-left {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        
+        /* Subtle float animation for the diamond image */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+            background-color: #0e5096;
+            color: white;
+            padding: 12px 0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 50;
+        }
+
+        .marquee-text {
+            display: inline-block;
+            animation: scroll-left 40s linear infinite; 
+            font-size: 1.15rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col relative pb-16">
+
+    <div class="fixed inset-0 opacity-10 pointer-events-none z-0" style="background-image: radial-gradient(#0e5096 2px, transparent 2px); background-size: 40px 40px;"></div>
+
+    <div class="flex-1 w-full max-w-7xl mx-auto z-10 px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-10">
+        
+        <div class="w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left space-y-6">
+            <img src="Logo.jpg" alt="Baroda High School Logo" class="h-32 w-auto drop-shadow-md rounded-xl">
+            
+            <div>
+                <h1 class="text-4xl md:text-5xl font-extrabold text-[#0e5096] tracking-tight leading-tight mb-2">Baroda High School,<br>Alkapuri</h1>
+                <h2 class="text-xl md:text-2xl font-semibold text-[#66aadd] mb-4">(Morning Shift)</h2>
+                <h3 class="text-xl md:text-2xl font-black text-slate-700 bg-blue-100 inline-block px-5 py-2 rounded-lg border-2 border-blue-200">Interactive Math Portal</h3>
+            </div>
+
+            <p class="text-lg text-slate-600 max-w-md">
+                Welcome to your daily math practice! Challenge yourself, track your progress, and master your grade-level topics.
+            </p>
+
+            <a href="practice.html" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-2xl py-4 px-10 rounded-2xl shadow-xl transition-transform hover:-translate-y-1 hover:shadow-2xl border-4 border-blue-400">
+                🚀 Start Practicing &rarr;
+            </a>
+        </div>
+
+       <div class="w-full md:w-1/2 flex justify-center items-center p-4">
+            
+            <div class="grid grid-cols-2 gap-4 max-w-md w-full">
+                
+                <div class="flex flex-col gap-4 pt-12">
+                    <img src="Poster 1.jpg" alt="Math gives us hope" class="w-full h-auto rounded-xl shadow-lg border-2 border-white transition-transform hover:scale-105 hover:shadow-2xl">
+                     <img src="Poster 2.jpg" alt="MATH the only subject" class="w-full h-auto rounded-xl shadow-lg border-2 border-white transition-transform hover:scale-105 hover:shadow-2xl">
+                </div>
+                
+                <div class="flex flex-col gap-4 pb-12">
+                   
+                    <img src="Poster 4.jpg" alt="MATH where every problem" class="w-full h-auto rounded-xl shadow-lg border-2 border-white transition-transform hover:scale-105 hover:shadow-2xl">
+<img src="Poster 3.jpg" alt="The expert in anything" class="w-full h-auto rounded-xl shadow-lg border-2 border-white transition-transform hover:scale-105 hover:shadow-2xl">
+                </div>
+
+            </div>
+            
+        </div>
+
+    </div>
+
+    <div class="marquee-container shadow-[0_-4px_10px_rgba(0,0,0,0.1)]">
+        <div class="marquee-text">
+            ✦ "Mathematics is the queen of the sciences." – Carl Friedrich Gauss &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            ✦ "An equation for me has no meaning, unless it expresses a thought of God." – Srinivasa Ramanujan &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            ✦ "Pure mathematics is, in its way, the poetry of logical ideas." – Albert Einstein &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            ✦ "The only way to learn mathematics is to do mathematics." – Paul Halmos &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        </div>
+    </div>
+
+</body>
+</html>
