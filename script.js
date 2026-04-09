@@ -14,19 +14,38 @@ let currentTopic = '';
 let timerInterval;
 let secondsElapsed = 0;
 
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+// Lazy-load audio so strict browsers don't block the script from starting
+let audioCtx;
 
-const views = {
-    loading: document.getElementById('loading-screen'),
-    grade: document.getElementById('grade-view'),
-    topic: document.getElementById('topic-view'),
-    type: document.getElementById('type-view'),
-    practice: document.getElementById('practice-view'),
-    score: document.getElementById('score-view')
-};
+function getViews() {
+    return {
+        loading: document.getElementById('loading-screen'),
+        grade: document.getElementById('grade-view'),
+        topic: document.getElementById('topic-view'),
+        type: document.getElementById('type-view'),
+        practice: document.getElementById('practice-view'),
+        score: document.getElementById('score-view')
+    };
+}
+
+function showView(viewName) {
+    const views = getViews();
+    Object.values(views).forEach(v => {
+        if (v) v.classList.add('hidden');
+    });
+    if (views[viewName]) {
+        views[viewName].classList.remove('hidden');
+    }
+}
 
 function playSound(type) {
+    // Only initialize audio when a sound actually needs to be played
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    
     if (audioCtx.state === 'suspended') audioCtx.resume();
+    
     const oscillator = audioCtx.createOscillator();
     const gainNode = audioCtx.createGain();
     
@@ -89,12 +108,6 @@ function init() {
     });
 }
 
-
-function showView(viewName) {
-    Object.values(views).forEach(v => v.classList.add('hidden'));
-    views[viewName].classList.remove('hidden');
-}
-
 function showGrades() {
     document.getElementById('nav-back-grades').classList.add('hidden');
     document.getElementById('nav-back-topics').classList.add('hidden');
@@ -120,9 +133,8 @@ function showGrades() {
 }
 
 function showTopics(selectedGrade) {
-
-document.getElementById('nav-back-grades').classList.remove('hidden');
-document.getElementById('nav-back-topics').classList.add('hidden');
+    document.getElementById('nav-back-grades').classList.remove('hidden');
+    document.getElementById('nav-back-topics').classList.add('hidden');
     currentGrade = selectedGrade; 
     document.getElementById('selected-grade-title').innerText = `Grade ${selectedGrade} Topics`;
     
@@ -143,8 +155,8 @@ document.getElementById('nav-back-topics').classList.add('hidden');
 }
 
 function showQuestionTypes(topic, questionsForTopic) {
-document.getElementById('nav-back-grades').classList.add('hidden');
-document.getElementById('nav-back-topics').classList.remove('hidden');
+    document.getElementById('nav-back-grades').classList.add('hidden');
+    document.getElementById('nav-back-topics').classList.remove('hidden');
     currentTopic = topic;
     currentPendingQuestions = questionsForTopic;
     document.getElementById('selected-topic-title').innerText = `${topic} Practice`;
@@ -246,7 +258,6 @@ function loadQuestion() {
         });
 
     } else if (qType === 'FIB') {
-        // Change grid to 1 column for the input box
         optionsContainer.classList.remove('md:grid-cols-2');
         optionsContainer.classList.add('grid-cols-1');
 
@@ -335,7 +346,6 @@ function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType)
     explanationText.innerText = explanation ? `Explanation: ${explanation}` : '';
     document.getElementById('next-btn').classList.remove('hidden');
     
-    // Reset grid after FIB is done so the next MCQ question doesn't look weird
     const optionsContainer = document.getElementById('options-container');
     optionsContainer.classList.remove('grid-cols-1');
     optionsContainer.classList.add('md:grid-cols-2');
@@ -373,8 +383,8 @@ function showFinalScore() {
     }
 }
 
-// Smart Navigation Logic
 function handleBackNavigation() {
+    const views = getViews();
     if (!views.practice.classList.contains('hidden')) {
         quitPractice(); 
     } 
@@ -392,4 +402,5 @@ function handleBackNavigation() {
     }
 }
 
-window.onload = init;
+// Replaced window.onload with DOMContentLoaded to bypass broken images
+document.addEventListener('DOMContentLoaded', init);
