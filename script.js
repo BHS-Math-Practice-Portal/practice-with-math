@@ -1,3 +1,4 @@
+alert("My JavaScript is connected and running!");
 // ==========================================
 // 🛑 YOUR GOOGLE SHEET CSV LINK
 // ==========================================
