@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practice Room - Baroda High School Math Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        /* Small Grid Background Pattern */
+        .bg-grid-pattern {
+            background-color: #f8fafc; 
+            background-image: 
+                linear-gradient(#cbd5e1 1px, transparent 1px), 
+                linear-gradient(90deg, #cbd5e1 1px, transparent 1px);
+            background-size: 20px 20px; 
+        }
+
+        /* --- CARD TEXTURES & PATTERNS --- */
+        .pattern-dots {
+            background-image: radial-gradient(rgba(0, 0, 0, 0.08) 2px, transparent 2px);
+            background-size: 15px 15px;
+        }
+        .pattern-lines {
+            background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.04) 0, rgba(0,0,0,0.04) 2px, transparent 2px, transparent 10px);
+        }
+        .pattern-grid-sm {
+            background-image: linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
+            background-size: 12px 12px;
+        }
+        
+        /* Loading spinner */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #1a365d;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-grid-pattern text-slate-800 font-sans min-h-screen flex flex-col relative">
+    
+    <header class="bg-[#1a365d] p-6 shadow-md z-20 sticky top-0">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-6">
+            <div class="flex items-center gap-6">
+                <img src="Logo.jpg" alt="Baroda High School Logo" class="h-20 w-auto drop-shadow-md rounded-xl bg-white p-1">
+                <div class="space-y-1">
+                    <h1 class="text-4xl font-extrabold text-white tracking-tight leading-tight">Baroda High Schools</h1>
+                    <h2 class="text-lg font-semibold text-slate-300"><i>An Interactive Math Practice Portal</i></h2>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="inline-block bg-white text-[#1a365d] font-bold text-lg py-3 px-6 rounded-xl shadow-lg transition-transform hover:-translate-y-1 hover:shadow-xl border-2 border-slate-200">
+                     🏠 Back to Home
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 w-full max-w-7xl mx-auto z-10 p-6 md:p-10 flex flex-col items-center">
+        
+        <div class="w-full bg-white p-8 rounded-xl shadow-sm border-t-4 border-blue-600 mb-8 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h2 class="text-3xl font-bold text-[#1a365d] mb-2">Practice Room</h2>
+                <p class="text-slate-600 text-lg">Select your grade level below to access targeted mathematical training and interactive modules.</p>
+            </div>
+            <div class="text-5xl">🎯</div>
+        </div>
+
+        <div id="loading-state" class="w-full text-center py-10">
+            <div class="loader mb-4"></div>
+            <p class="text-slate-600 font-semibold">Loading practice modules from database...</p>
+        </div>
+
+        <div id="grades-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full hidden">
+            </div>
+
+    </main>
+
+    <footer class="bg-gray-950 text-slate-300 py-8 px-6 z-20 border-t-2 border-slate-700 mt-auto">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between gap-10">
+            
+            <div class="space-y-4 md:max-w-md">
+                <h4 class="font-bold text-lg text-white">Contact us</h4>
+                <div class="flex items-center gap-4">
+                    <a href="mailto:bhsmor@barodahighschool.com" class="bg-blue-600 hover:bg-blue-700 p-3 rounded-xl shadow-md transition-transform hover:-translate-y-1">
+                        <i class="fas fa-envelope text-white text-2xl"></i>
+                    </a>
+                    <a href="tel:+912334607" class="bg-blue-600 hover:bg-blue-700 p-3 rounded-xl shadow-md transition-transform hover:-translate-y-1">
+                        <i class="fas fa-phone text-white text-2xl"></i>
+                    </a>
+                    <p class="text-sm">For questions and support, reach out to our team at bhsmor@barodahighschool.com or +91 2334607.</p>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <h4 class="font-bold text-lg text-white">Follow us</h4>
+                <div class="flex items-center gap-3">
+                    <a href="https://www.facebook.com/barodahighschoolalkapuri" target="_blank" class="text-[#1877F2] hover:text-[#0c59cc] p-1 shadow-sm transition-transform hover:-translate-y-1">
+                        <i class="fab fa-facebook-f text-3xl"></i>
+                    </a>
+                    <a href="https://twitter.com/baroda_hs" target="_blank" class="text-[#1DA1F2] hover:text-[#0b87d6] p-1 shadow-sm transition-transform hover:-translate-y-1">
+                        <i class="fab fa-twitter text-3xl"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/school/baroda-high-school-alkapuri" target="_blank" class="text-[#0A66C2] hover:text-[#064387] p-1 shadow-sm transition-transform hover:-translate-y-1">
+                        <i class="fab fa-linkedin-in text-3xl"></i>
+                    </a>
+                    <a href="https://www.youtube.com/channel/UC-O_1Vb94_0_r_9-C4V6qgQ" target="_blank" class="text-[#FF0000] hover:text-[#cc0000] p-1 shadow-sm transition-transform hover:-translate-y-1">
+                        <i class="fab fa-youtube text-3xl"></i>
+                    </a>
+                    <a href="https://www.instagram.com/barodahighschool_alkapuri" target="_blank" class="text-[#C13584] hover:text-[#8f2a60] p-1 shadow-sm transition-transform hover:-translate-y-1">
+                        <i class="fab fa-instagram text-3xl"></i>
+                    </a>
+                    <a href="https://wa.me/912334607" target="_blank" class="text-[#25D366] hover:text-[#1da44e] p-1 shadow-sm transition-transform hover:-translate-y-1">
+                        <i class="fab fa-whatsapp text-3xl"></i>
+                    </a>
+                </div>
+            </div>
+            
+        </div>
+    </footer>
+
+    <script>
+        function fetchGradesData() {
+            const container = document.getElementById('grades-container');
+            const loadingState = document.getElementById('loading-state');
+            
+            // 🚨 PASTE THE CSV LINK YOU COPIED FROM GOOGLE SHEETS HERE 🚨
+            const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQi3wglj0KY9gukaN6oVdot2tKiUEWcfxXi_0ZSO3QUttnUz2UriGxceXnHk9Sm25I7L-7MwbPzK9Rt/pub?output=csv'; 
+
+            Papa.parse(csvUrl, {
+                download: true,
+                header: true, 
+                skipEmptyLines: true,
+                complete: function(results) {
+                    const sheetData = results.data;
+                    
+                    container.innerHTML = '';
+
+                    sheetData.forEach(item => {
+                        const isBonus = (item.isBonus && item.isBonus.toLowerCase() === 'true');
+                        
+                        // Button colors
+                        const btnClass = isBonus ? "bg-[#1a365d] hover:bg-slate-800" : "bg-blue-600 hover:bg-blue-700";
+                        
+                        // Make bonus card span columns
+                        const colSpan = isBonus ? "md:col-span-3 lg:w-2/3 mx-auto" : "";
+
+                        const cardHTML = `
+                            <div class="${item.bgColor} ${item.pattern} p-6 rounded-xl shadow-md border border-white/50 hover:shadow-xl transition-transform hover:-translate-y-2 text-center flex flex-col h-full relative overflow-hidden group ${colSpan}">
+                                <div class="absolute inset-0 bg-white/40 group-hover:bg-white/20 transition-colors pointer-events-none"></div>
+                                <div class="relative z-10 flex flex-col h-full">
+                                    <div class="text-5xl mb-4 drop-shadow-md">${item.emoji}</div>
+                                    <h3 class="text-2xl font-extrabold text-[#1a365d] mb-2 drop-shadow-sm">${item.grade}</h3>
+                                    <p class="text-slate-800 font-medium mb-6 flex-grow text-sm drop-shadow-sm">${item.desc}</p>
+                                    
+                                    <a href="${item.link}" class="${btnClass} text-white font-bold py-3 px-4 rounded-xl w-full transition-all shadow-md hover:shadow-lg mt-auto inline-block">
+                                        ${isBonus ? 'Challenge Yourself' : 'Enter ' + item.grade}
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                        container.innerHTML += cardHTML;
+                    });
+
+                    loadingState.classList.add('hidden');
+                    container.classList.remove('hidden');
+                },
+                error: function(error) {
+                    console.error("Error loading data:", error);
+                    loadingState.innerHTML = `<p class="text-red-500 font-bold">Failed to load practice modules. Please try again.</p>`;
+                }
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', fetchGradesData);
+    </script>
+</body>
+</html>

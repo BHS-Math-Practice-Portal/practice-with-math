@@ -1,104 +1,144 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Baroda High School - Math Portal Home</title>
+    <title>Interactive Math Portal - Baroda High School</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        @keyframes scroll-up {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-50%); }
-        }
-        @keyframes scroll-left {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
+        .outline-white {
+            -webkit-text-stroke: 1px white;
         }
         
-        /* Subtle float animation for the diamond image */
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
+        /* Fixed marquee animation */
+        @keyframes marquee {
+            0% { transform: translateX(100vw); }
+            100% { transform: translateX(-100%); }
         }
-        .animate-float {
-            animation: float 6s ease-in-out infinite;
-        }
-
-        .marquee-container {
-            overflow: hidden;
-            white-space: nowrap;
-            background-color: #0e5096;
-            color: white;
-            padding: 12px 0;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            z-index: 50;
-        }
-
-        .marquee-text {
+        .animate-marquee {
             display: inline-block;
-            animation: scroll-left 40s linear infinite; 
-            font-size: 1.15rem;
-            font-weight: 600;
+            animation: marquee 25s linear infinite;
+        }
+        .pause-marquee:hover .animate-marquee {
+            animation-play-state: paused;
+        }
+
+        /* Small Grid Background Pattern */
+        .bg-grid-pattern {
+            background-color: #f8fafc; /* Very light slate base color */
+            background-image: 
+                linear-gradient(#cbd5e1 1px, transparent 1px), 
+                linear-gradient(90deg, #cbd5e1 1px, transparent 1px);
+            background-size: 20px 20px; /* Adjust size of the grid squares here */
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col relative pb-16">
-
-    <div class="fixed inset-0 opacity-10 pointer-events-none z-0" style="background-image: radial-gradient(#0e5096 2px, transparent 2px); background-size: 40px 40px;"></div>
-
-    <div class="flex-1 w-full max-w-7xl mx-auto z-10 px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-10">
-        
-        <div class="w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left space-y-6">
-            <img src="Logo.jpg" alt="Baroda High School Logo" class="h-32 w-auto drop-shadow-md rounded-xl">
-            
-            <div>
-                <h1 class="text-4xl md:text-5xl font-extrabold text-[#0e5096] tracking-tight leading-tight mb-2">Baroda High School,<br>Alkapuri</h1>
-                <h2 class="text-xl md:text-2xl font-semibold text-[#66aadd] mb-4">(Morning Shift)</h2>
-                <h3 class="text-xl md:text-2xl font-black text-slate-700 bg-blue-100 inline-block px-5 py-2 rounded-lg border-2 border-blue-200">Interactive Math Portal</h3>
+<body class="bg-grid-pattern text-slate-800 font-sans min-h-screen flex flex-col relative">
+    
+    <header class="bg-[#1a365d] p-6 shadow-md z-20 sticky top-0">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-6">
+            <div class="flex items-center gap-6">
+                <img src="Logo.jpg" alt="Baroda High School Logo" class="h-20 w-auto drop-shadow-md rounded-xl bg-white p-1">
+                <div class="space-y-1">
+                    <h1 class="text-4xl font-extrabold text-white tracking-tight leading-tight">Baroda High Schools</h1>
+                    <h2 class="text-lg font-semibold text-slate-300"><I>An Interactive Math Practice Portal</I></h2>
+                </div>
             </div>
 
-            <p class="text-lg text-slate-600 max-w-md">
-                Welcome to your daily math practice! Challenge yourself, track your progress, and master your grade-level topics.
-            </p>
+            <div class="flex items-center gap-4">
+                <a href="intro.html" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xl py-3 px-10 rounded-xl shadow-lg transition-transform hover:-translate-y-1 hover:shadow-2xl border-4 border-blue-400">
+                     📖 Why Us?
+                </a>
+                <a href="practice1.html" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xl py-3 px-10 rounded-xl shadow-lg transition-transform hover:-translate-y-1 hover:shadow-2xl border-4 border-blue-400">
+                     Practice Portal &rarr;
+                </a>
+            </div>
+        </div>
+    </header>
 
-            <a href="practice.html" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-2xl py-4 px-10 rounded-2xl shadow-xl transition-transform hover:-translate-y-1 hover:shadow-2xl border-4 border-blue-400">
-                🚀 Start Practicing &rarr;
-            </a>
+    <main class="flex-1 w-full max-w-7xl mx-auto z-10 p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-10">
+        
+        <div id="intro-section" class="w-full md:w-1/2 bg-white p-8 rounded-xl shadow-sm text-center flex flex-col items-center justify-center min-h-[300px] scroll-mt-32">
+            <h3 class="text-3xl font-bold text-[#1a365d] mb-4">About the Practice Portal</h3>
+            <p class="text-slate-600 text-lg leading-relaxed">
+                Welcome to the Baroda High Schools Math Interactive Practice Portal, a dedicated platform designed to enhance your mathematical journey. Our primary purpose is to make learning math engaging, accessible, and highly effective for students of all levels. We believe that consistent practice is the key to mastering complex concepts, which is why this portal offers a wide range of interactive exercises, step-by-step problem-solving modules, and real-time feedback. Whether you are brushing up on foundational arithmetic, exploring algebra, or diving into advanced geometry, this site provides the tools you need to build confidence and achieve academic excellence. Start your math journey!
+            </p>
         </div>
 
-       <div class="w-full md:w-1/2 flex justify-center items-center p-4">
-            
-            <div class="grid grid-cols-2 gap-4 max-w-md w-full">
+        <div class="w-full md:w-1/2 flex justify-end">
+            <div class="grid grid-cols-2 gap-4 max-w-lg w-full">
                 
                 <div class="flex flex-col gap-4 pt-12">
-                    <img src="Poster 1.jpg" alt="Math gives us hope" class="w-full h-auto rounded-xl shadow-lg border-2 border-white transition-transform hover:scale-105 hover:shadow-2xl">
-                     <img src="Poster 2.jpg" alt="MATH the only subject" class="w-full h-auto rounded-xl shadow-lg border-2 border-white transition-transform hover:scale-105 hover:shadow-2xl">
+                    <img src="Poster 1.jpg" alt="Math gives us hope" class="w-full h-auto rounded-xl shadow-lg border-2 border-white transition-transform hover:scale-105 hover:shadow-2xl bg-slate-200">
+                    <img src="Poster 3.jpg" alt="The expert in anything" class="w-full h-auto rounded-xl shadow-lg border-2 border-white transition-transform hover:scale-105 hover:shadow-2xl bg-slate-200">
                 </div>
                 
                 <div class="flex flex-col gap-4 pb-12">
-                   
-                    <img src="Poster 4.jpg" alt="MATH where every problem" class="w-full h-auto rounded-xl shadow-lg border-2 border-white transition-transform hover:scale-105 hover:shadow-2xl">
-<img src="Poster 3.jpg" alt="The expert in anything" class="w-full h-auto rounded-xl shadow-lg border-2 border-white transition-transform hover:scale-105 hover:shadow-2xl">
+                    <img src="Poster 2.jpg" alt="MATH the only subject" class="w-full h-auto rounded-xl shadow-lg border-2 border-white transition-transform hover:scale-105 hover:shadow-2xl bg-slate-200">
+                    <img src="Poster 4.jpg" alt="MATH where every problem" class="w-full h-auto rounded-xl shadow-lg border-2 border-white transition-transform hover:scale-105 hover:shadow-2xl bg-slate-200">
                 </div>
 
             </div>
-            
         </div>
 
+    </main>
+    
+    <div class="text-center py-4 z-20">
+        <p class="text-black italic text-lg font-medium bg-white/70 inline-block px-4 py-1 rounded-full">Welcome to your daily dose of mathematical inspiration!</p>
     </div>
 
-    <div class="marquee-container shadow-[0_-4px_10px_rgba(0,0,0,0.1)]">
-        <div class="marquee-text">
+    <div class="overflow-hidden whitespace-nowrap bg-slate-800 py-3 border-y-2 border-slate-700 shadow-[0_-4px_10px_rgba(0,0,0,0.1)] pause-marquee">
+        <div class="animate-marquee text-slate-300 font-medium text-lg">
             ✦ "Mathematics is the queen of the sciences." – Carl Friedrich Gauss &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             ✦ "An equation for me has no meaning, unless it expresses a thought of God." – Srinivasa Ramanujan &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             ✦ "Pure mathematics is, in its way, the poetry of logical ideas." – Albert Einstein &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             ✦ "The only way to learn mathematics is to do mathematics." – Paul Halmos &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         </div>
     </div>
+
+    <footer class="bg-gray-950 text-slate-300 py-8 px-6 z-20 border-t-2 border-slate-700">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between gap-10">
+            
+            <div class="space-y-4 md:max-w-md">
+                <h4 class="font-bold text-lg text-white">Contact us</h4>
+                <div class="flex items-center gap-4">
+                    <a href="mailto:bhsmor@barodahighschool.com" class="bg-blue-600 hover:bg-blue-700 p-3 rounded-xl shadow-md transition-transform hover:-translate-y-1">
+                        <i class="fas fa-envelope text-white text-2xl"></i>
+                    </a>
+                    <a href="tel:+912334607" class="bg-blue-600 hover:bg-blue-700 p-3 rounded-xl shadow-md transition-transform hover:-translate-y-1">
+                        <i class="fas fa-phone text-white text-2xl"></i>
+                    </a>
+                    <p class="text-sm">For questions and support, reach out to our team at bhsmor@barodahighschool.com or +91 2334607.</p>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <h4 class="font-bold text-lg text-white">Follow us</h4>
+                <div class="flex items-center gap-3">
+                    <a href="https://www.facebook.com/barodahighschoolalkapuri" target="_blank" class="text-[#1877F2] hover:text-[#0c59cc] p-1 shadow-sm transition-transform hover:-translate-y-1">
+                        <i class="fab fa-facebook-f text-3xl"></i>
+                    </a>
+                    <a href="https://twitter.com/baroda_hs" target="_blank" class="text-[#1DA1F2] hover:text-[#0b87d6] p-1 shadow-sm transition-transform hover:-translate-y-1">
+                        <i class="fab fa-twitter text-3xl"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/school/baroda-high-school-alkapuri" target="_blank" class="text-[#0A66C2] hover:text-[#064387] p-1 shadow-sm transition-transform hover:-translate-y-1">
+                        <i class="fab fa-linkedin-in text-3xl"></i>
+                    </a>
+                    <a href="https://www.youtube.com/channel/UC-O_1Vb94_0_r_9-C4V6qgQ" target="_blank" class="text-[#FF0000] hover:text-[#cc0000] p-1 shadow-sm transition-transform hover:-translate-y-1">
+                        <i class="fab fa-youtube text-3xl"></i>
+                    </a>
+                    <a href="https://www.instagram.com/barodahighschool_alkapuri" target="_blank" class="text-[#C13584] hover:text-[#8f2a60] p-1 shadow-sm transition-transform hover:-translate-y-1">
+                        <i class="fab fa-instagram text-3xl"></i>
+                    </a>
+                    <a href="https://wa.me/912334607" target="_blank" class="text-[#25D366] hover:text-[#1da44e] p-1 shadow-sm transition-transform hover:-translate-y-1">
+                        <i class="fab fa-whatsapp text-3xl"></i>
+                    </a>
+                </div>
+            </div>
+            
+        </div>
+    </footer>
 
 </body>
 </html>
