@@ -31,7 +31,6 @@
 
     <header class="bg-[#1a365d] p-6 shadow-md z-30 sticky top-0 w-full">
         <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-6">
-            
             <div class="flex items-center gap-6">
                 <img src="Logo.jpg" alt="Baroda High School Logo" class="h-20 w-auto drop-shadow-md rounded-xl bg-white p-1">
                 <div class="space-y-1">
@@ -39,17 +38,19 @@
                     <h2 class="text-lg font-semibold text-slate-300"><I>An Interactive Math Practice Portal</I></h2>
                 </div>
             </div>
-
-            <div class="bg-white py-3 px-6 rounded-xl shadow-lg border-t-4 border-blue-600 flex items-center gap-3">
-                <h2 class="text-2xl font-bold text-[#1a365d]">Practice Room</h2>
-                <div class="text-3xl">🎯</div>
-            </div>
-
         </div>
     </header>
 
     <main class="flex-1 w-full max-w-7xl mx-auto z-10 p-6 md:p-10 flex flex-col items-center relative">
         
+        <div class="w-full bg-white p-8 rounded-xl shadow-sm border-t-4 border-blue-600 mb-8 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h2 class="text-3xl font-bold text-[#1a365d] mb-2">Practice Room</h2>
+                <p class="text-slate-600 text-lg">Select your grade level below to access targeted mathematical training and interactive modules.</p>
+            </div>
+            <div class="text-5xl">🎯</div>
+        </div>
+
         <div id="app-container" class="max-w-4xl w-full bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-10 min-h-[500px] border border-slate-100">
             
             <div class="flex flex-wrap items-center justify-between w-full mb-6 pb-4 border-b-2 border-slate-100">
@@ -133,4 +134,66 @@
 
             <div id="score-view" class="hidden text-center py-10">
                 <h2 class="text-5xl font-extrabold mb-6 text-slate-800">Practice Complete!</h2>
-                <p class="text-3xl mb-4 font-medium text-slate-700">You scored <span id="final-score" class="text-blue-600 font-black
+                <p class="text-3xl mb-4 font-medium text-slate-700">You scored <span id="final-score" class="text-blue-600 font-black text-4xl"></span> out of <span id="total-questions" class="font-bold text-4xl"></span>.</p>
+                <p class="text-2xl text-slate-600 mb-10 font-mono bg-slate-100 inline-block px-6 py-3 rounded-lg border border-slate-200">Time taken: <span id="final-time" class="text-slate-900 font-bold">00:00</span></p>
+                
+                <div class="flex flex-col items-center gap-6">
+                    <button onclick="showTopics(currentGrade)" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-2xl py-4 px-10 rounded-xl shadow-lg w-full md:w-2/3 transition-transform hover:scale-105">
+                        Choose Another Topic
+                    </button>
+                    <button onclick="showGrades()" class="text-slate-500 hover:text-slate-800 font-bold text-xl underline underline-offset-4">
+                        Or change grade level
+                    </button>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+
+    <footer class="bg-gray-950 text-slate-300 py-8 px-6 z-20 border-t-2 border-slate-700 w-full mt-auto">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between gap-10">
+            
+            <div class="space-y-4 md:max-w-md">
+                <h4 class="font-bold text-lg text-white">Contact us</h4>
+                <div class="flex items-center gap-4">
+                    <a href="mailto:bhsmor@barodahighschool.com" class="bg-blue-600 hover:bg-blue-700 p-3 rounded-xl shadow-md transition-transform hover:-translate-y-1">
+                        <i class="fas fa-envelope text-white text-2xl"></i>
+                    </a>
+                    <a href="tel:+912334607" class="bg-blue-600 hover:bg-blue-700 p-3 rounded-xl shadow-md transition-transform hover:-translate-y-1">
+                        <i class="fas fa-phone text-white text-2xl"></i>
+                    </a>
+                    <p class="text-sm">For questions and support, reach out to our team at bhsmor@barodahighschool.com or +91 2334607.</p>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <h4 class="font-bold text-lg text-white">Follow us</h4>
+                <div class="flex items-center gap-3">
+                    <a href="https://www.facebook.com/barodahighschoolalkapuri" target="_blank" class="text-[#1877F2] hover:text-[#0c59cc] p-1 shadow-sm transition-transform hover:-translate-y-1">
+                        <i class="fab fa-facebook-f text-3xl"></i>
+                    </a>
+                    <a href="https://twitter.com/baroda_hs" target="_blank" class="text-[#1DA1F2] hover:text-[#0b87d6] p-1 shadow-sm transition-transform hover:-translate-y-1">
+                        <i class="fab fa-twitter text-3xl"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/school/baroda-high-school-alkapuri" target="_blank" class="text-[#0A66C2] hover:text-[#064387] p-1 shadow-sm transition-transform hover:-translate-y-1">
+                        <i class="fab fa-linkedin-in text-3xl"></i>
+                    </a>
+                    <a href="https://www.youtube.com/channel/UC-O_1Vb94_0_r_9-C4V6qgQ" target="_blank" class="text-[#FF0000] hover:text-[#cc0000] p-1 shadow-sm transition-transform hover:-translate-y-1">
+                        <i class="fab fa-youtube text-3xl"></i>
+                    </a>
+                    <a href="https://www.instagram.com/barodahighschool_alkapuri" target="_blank" class="text-[#C13584] hover:text-[#8f2a60] p-1 shadow-sm transition-transform hover:-translate-y-1">
+                        <i class="fab fa-instagram text-3xl"></i>
+                    </a>
+                    <a href="https://wa.me/912334607" target="_blank" class="text-[#25D366] hover:text-[#1da44e] p-1 shadow-sm transition-transform hover:-translate-y-1">
+                        <i class="fab fa-whatsapp text-3xl"></i>
+                    </a>
+                </div>
+            </div>
+            
+        </div>
+    </footer>
+
+</body>
+</html>
