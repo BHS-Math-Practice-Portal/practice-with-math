@@ -14,7 +14,6 @@ let currentTopic = '';
 let timerInterval;
 let secondsElapsed = 0;
 
-// Lazy-load audio so strict browsers don't block the script from starting
 let audioCtx;
 
 function getViews() {
@@ -39,7 +38,6 @@ function showView(viewName) {
 }
 
 function playSound(type) {
-    // Only initialize audio when a sound actually needs to be played
     if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
@@ -81,7 +79,6 @@ function preloadImages(questionsArray) {
 }
 
 function init() {
-    // Make sure loading screen is visible
     document.getElementById('loading-screen').classList.remove('hidden');
     document.getElementById('grade-view').classList.add('hidden');
 
@@ -97,7 +94,6 @@ function init() {
                 return;
             }
             
-            // Success! Load the app
             preloadImages(allQuestions);
             showGrades();
         },
@@ -110,7 +106,14 @@ function init() {
 
 function showGrades() {
     document.getElementById('nav-back-grades').classList.add('hidden');
-    document.getElementById('nav-back-topics').classList.add('hidden');       
+    document.getElementById('nav-back-topics').classList.add('hidden');
+    
+    // THE FIX: The filter excluding 9 and 10 has been removed.
+    // It will now show all grades dynamically from your sheet.
+    const grades = [...new Set(allQuestions.map(q => q.Grade))]
+        .filter(Boolean)
+        .sort((a, b) => a - b);    
+        
     const container = document.getElementById('grade-buttons');
     container.innerHTML = '';
 
@@ -395,5 +398,4 @@ function handleBackNavigation() {
     }
 }
 
-// Replaced window.onload with DOMContentLoaded to bypass broken images
 document.addEventListener('DOMContentLoaded', init);
