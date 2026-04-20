@@ -135,23 +135,20 @@ function showTopics(selectedGrade) {
     document.getElementById('selected-grade-title').innerText = `Grade ${selectedGrade} - Select Chapter`;
     
     const gradeQuestions = allQuestions.filter(q => q.Grade === selectedGrade);
-    // Sort topics so Chapter 1 comes before Chapter 2
-    const topics = [...new Set(gradeQuestions.map(q => q.Topic))].filter(Boolean).sort((a, b) => {
+    
+    // UPDATED: Changed .Topic to .Chapter_Number_Name
+    const topics = [...new Set(gradeQuestions.map(q => q.Chapter_Number_Name))].filter(Boolean).sort((a, b) => {
         return a.localeCompare(b, undefined, {numeric: true, sensitivity: 'base'});
     });   
     
     const container = document.getElementById('topic-buttons');
     container.innerHTML = '';
-
-    // We use a cleaner grid for Chapters
     container.className = "grid grid-cols-1 md:grid-cols-2 gap-4 w-full";
 
     topics.forEach(topic => {
         const btn = document.createElement('button');
-        // This styling matches your existing colors but adds a "Chapter Tab" feel
         btn.className = 'flex items-center text-left bg-white border-l-8 border-blue-600 border-t border-r border-b border-slate-200 hover:border-blue-500 hover:bg-blue-50 p-5 rounded-r-xl shadow-sm transition-all hover:scale-[1.02]';
         
-        // Creating the inner HTML to show a "Book" icon and the Chapter Name
         btn.innerHTML = `
             <div class="bg-blue-100 text-blue-700 rounded-lg p-3 mr-4">
                 <i class="fas fa-book-open text-xl"></i>
@@ -159,13 +156,13 @@ function showTopics(selectedGrade) {
             <span class="font-bold text-xl text-slate-800">${topic}</span>
         `;
         
-        btn.onclick = () => showQuestionTypes(topic, gradeQuestions.filter(q => q.Topic === topic));
+        // UPDATED: Filtering by .Chapter_Number_Name
+        btn.onclick = () => showQuestionTypes(topic, gradeQuestions.filter(q => q.Chapter_Number_Name === topic));
         container.appendChild(btn);
     });
 
     showView('topic');
 }
-
 
 function showQuestionTypes(topic, questionsForTopic) {
     document.getElementById('nav-back-grades').classList.add('hidden');
@@ -173,33 +170,34 @@ function showQuestionTypes(topic, questionsForTopic) {
     currentTopic = topic;
     currentPendingQuestions = questionsForTopic;
     
-    // Update the title
     document.getElementById('selected-topic-title').innerText = topic;
     
-    // Check if a worksheet area exists, if not, let's create a placeholder link
-    // Note: You would need to name your PDFs exactly like your chapters
+    const typeView = document.getElementById('type-view');
+    const oldBox = typeView.querySelector('.bg-yellow-50');
+    if (oldBox) oldBox.remove();
+
     const worksheetDiv = document.createElement('div');
     worksheetDiv.className = "mt-8 p-4 bg-yellow-50 border-2 border-dashed border-yellow-400 rounded-xl flex items-center justify-between";
+    
+    // Cleaning filename for the link
+    const safeFileName = topic.replace(/\s+/g, '_').replace(/:/g, ''); 
+    
     worksheetDiv.innerHTML = `
         <div class="text-left">
             <h4 class="font-bold text-yellow-800 text-lg">Chapter Worksheet</h4>
             <p class="text-yellow-700 text-sm">Download 20 practice questions for offline study.</p>
         </div>
-        <a href="worksheets/${topic.replace(/\s+/g, '_')}.pdf" download class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors">
+        <a href="worksheets/${safeFileName}.pdf" download class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors">
             <i class="fas fa-file-pdf"></i> Download
         </a>
     `;
 
-    // Add it to the view
-    const typeView = document.getElementById('type-view');
-    // Remove any old worksheet boxes before adding the new one
-    const oldBox = typeView.querySelector('.bg-yellow-50');
-    if (oldBox) oldBox.remove();
-    
     typeView.appendChild(worksheetDiv);
-
     showView('type');
 }
+
+
+
 function startPracticeFilter(selectedType) {
     let filteredQuestions = currentPendingQuestions;
     
@@ -426,7 +424,7 @@ function handleBackNavigation() {
         quitPractice(); 
     } 
     else if (!views.type.classList.contains('hidden')) {
-        showTopics(currentGrade); 
+        showTopics(currentGrade); // This uses the updated showTopics
     }
     else if (!views.topic.classList.contains('hidden')) {
         showGrades(); 
@@ -438,5 +436,4 @@ function handleBackNavigation() {
         window.location.href = 'index.html'; 
     }
 }
-
 document.addEventListener('DOMContentLoaded', init);
