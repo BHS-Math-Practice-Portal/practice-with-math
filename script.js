@@ -160,19 +160,27 @@ function showQuestionTypes(topic, questionsForTopic) {
     currentPendingQuestions = questionsForTopic;
     document.getElementById('selected-topic-title').innerText = topic;
 
-    // Handle Worksheet Box
     const typeView = document.getElementById('type-view');
     const oldBox = document.getElementById('worksheet-box');
     if (oldBox) oldBox.remove();
 
-    const safeFileName = topic.replace(/\s+/g, '_').replace(/:/g, ''); 
+    // --- SMART FILENAME LOGIC ---
+    // This takes the currentGrade (e.g., 1) and the topic (e.g., "1: Numbers")
+    // and turns it into "G1-1-Numbers.pdf"
+    const cleanTopic = topic.replace(/[:]/g, '')
+                             .replace(/\s+/g, '-')
+                             .replace(/-+/g, '-')
+                             .trim();
+    
+    const safeFileName = `G${currentGrade}-${cleanTopic}`;
+
     const worksheetDiv = document.createElement('div');
     worksheetDiv.id = 'worksheet-box';
     worksheetDiv.className = "mt-8 p-4 bg-yellow-50 border-2 border-dashed border-yellow-400 rounded-xl flex items-center justify-between";
     worksheetDiv.innerHTML = `
         <div class="text-left">
-            <h4 class="font-bold text-yellow-800 text-lg">Chapter Worksheet</h4>
-            <p class="text-yellow-700 text-sm">Download questions for offline study.</p>
+            <h4 class="font-bold text-yellow-800 text-lg">Grade ${currentGrade} Worksheet</h4>
+            <p class="text-yellow-700 text-sm">Download questions for ${topic}</p>
         </div>
         <a href="worksheets/${safeFileName}.pdf" download class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors">
             <i class="fas fa-file-pdf"></i> Download
@@ -181,7 +189,6 @@ function showQuestionTypes(topic, questionsForTopic) {
     typeView.appendChild(worksheetDiv);
     showView('type');
 }
-
 function startPracticeFilter(selectedType) {
     let filteredQuestions = currentPendingQuestions;
     if (selectedType !== 'ALL') {
