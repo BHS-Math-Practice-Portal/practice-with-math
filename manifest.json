@@ -1,8 +1,8 @@
 {
-  "name": "BHS Math Practice Portal",
+  "name": "BHS-Math Practice Portal",
   "short_name": "BHS Math",
   "description": "Practice Math Chapters and Download Worksheets",
-  "start_url": "index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2563eb",
