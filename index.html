@@ -32,6 +32,19 @@
                 linear-gradient(90deg, #cbd5e1 1px, transparent 1px);
             background-size: 20px 20px; /* Adjust size of the grid squares here */
         }
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2563eb">
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('Service Worker registered!'))
+        .catch(err => console.log('Service Worker failed:', err));
+    });
+  }
+</script>
     </style>
 </head>
 <body class="bg-grid-pattern text-slate-800 font-sans min-h-screen flex flex-col relative">
