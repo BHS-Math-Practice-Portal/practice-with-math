@@ -1,5 +1,5 @@
 {
-  "name": "Baroda High School Math Portal",
+  "name": "BHS Math Practice Portal",
   "short_name": "BHS Math",
   "description": "Practice Math Chapters and Download Worksheets",
   "start_url": "index.html",
@@ -8,12 +8,12 @@
   "theme_color": "#2563eb",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "./icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "icon-512.png",
+      "src": "./icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
