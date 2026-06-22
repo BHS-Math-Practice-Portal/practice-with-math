@@ -69,16 +69,18 @@ function playSound(type) {
         oscillator.stop(audioCtx.currentTime + 0.3);
     }
 }
-
 function preloadImages(questionsArray) {
     questionsArray.forEach(q => {
         if (q.Image_URL && q.Image_URL.trim() !== '') {
             const img = new Image();
+            // Catch image loading errors quietly so they don't crash the script
+            img.onerror = function() {
+                console.warn("Skipping broken database image link:", q.Image_URL);
+            };
             img.src = q.Image_URL.trim(); 
         }
     });
 }
-
 function init() {
     document.getElementById('loading-screen').classList.remove('hidden');
     Papa.parse(GOOGLE_SHEET_URL, {
