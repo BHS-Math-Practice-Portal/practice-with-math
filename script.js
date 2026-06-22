@@ -349,3 +349,14 @@ function handleBackNavigation() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+// ==========================================
+// 🚀 GLOBAL FAIL-SAFE SKIP BUTTON LISTENER
+// ==========================================
+document.addEventListener('click', function (event) {
+    // If the clicked element (or its parent) has the ID 'skip-btn', trigger nextQuestion
+    if (event.target && (event.target.id === 'skip-btn' || event.target.closest('#skip-btn'))) {
+        if (typeof nextQuestion === 'function') {
+            nextQuestion();
+        }
+    }
+});
