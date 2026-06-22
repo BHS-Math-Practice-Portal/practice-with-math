@@ -347,5 +347,11 @@ function handleBackNavigation() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
-// --- SIMPLE SKIP BUTTON CONNECTED TO NEXTQUESTION ---
-document.getElementById('skip-btn').addEventListener('click', nextQuestion);
+// --- PERMANENT SKIP BUTTON ---
+// This runs once when the page loads, making sure the button always works
+document.addEventListener('DOMContentLoaded', () => {
+    const skipBtn = document.getElementById('skip-btn');
+    if (skipBtn) {
+        skipBtn.onclick = nextQuestion;
+    }
+});
