@@ -351,29 +351,3 @@ function handleBackNavigation() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
-// ==========================================
-// 🚀 FIXED GLOBAL SKIP DRIVER
-// ==========================================
-document.addEventListener('click', function (event) {
-    if (event.target && (event.target.id === 'skip-btn' || event.target.closest('#skip-btn'))) {
-        
-        // 1. Clear out any text from Fill-in-the-blanks input field so it doesn't break
-        const fibInput = document.getElementById('fib-input');
-        if (fibInput) fibInput.value = '';
-
-        // 2. Clear out old option button configurations 
-        const optionsContainer = document.getElementById('options-container');
-        if (optionsContainer) {
-            optionsContainer.classList.remove('grid-cols-1');
-            optionsContainer.classList.add('md:grid-cols-2');
-        }
-
-        // 3. Explicitly force the index forward and reload
-        currentQuestionIndex++;
-        if (currentQuestionIndex < currentTopicQuestions.length) {
-            loadQuestion();
-        } else {
-            showFinalScore();
-        }
-    }
-});
