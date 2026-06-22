@@ -347,20 +347,14 @@ function handleBackNavigation() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
-// --- DROP-IN SKIP BUTTON LOGIC ---
+// --- CONNECTED SKIP BUTTON LOGIC ---
 document.getElementById('skip-btn').addEventListener('click', () => {
-    // 1. Move forward by one question index
-    currentQuestionIndex++; 
+    currentQuestionIndex++;
     
-    // 2. Check if there are still questions left in your array
-    if (currentQuestionIndex < questions.length) {
-        showQuestion(); // Calls your existing function to render the next question
+    // Checks against your actual active topic questions list
+    if (currentQuestionIndex < currentTopicQuestions.length) {
+        loadQuestion(); // Calls your exact loading function
     } else {
-        // If it was the last question, wrap up the quiz using your existing end logic
-        if (typeof showScore === "function") {
-            showScore(); 
-        } else {
-            alert("Great job! You have completed all the practice questions.");
-        }
+        showFinalScore(); // Calls your exact scoring function if it's the last question
     }
 });
