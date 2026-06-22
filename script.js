@@ -227,6 +227,8 @@ function startPractice(questions) {
     updateScoreDisplay();
     loadQuestion();
     showView('practice');
+    const skipBtn = document.getElementById('skip-btn');
+    if (skipBtn) skipBtn.onclick = nextQuestion;
 }
 
 function quitPractice() {
@@ -347,12 +349,3 @@ function handleBackNavigation() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
-// ==========================================
-// ⏭️ PERMANENT SKIP BUTTON DRIVER
-// ==========================================
-document.addEventListener('DOMContentLoaded', () => {
-    const skipBtn = document.getElementById('skip-btn');
-    if (skipBtn) {
-        skipBtn.onclick = nextQuestion;
-    }
-});
