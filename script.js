@@ -347,14 +347,5 @@ function handleBackNavigation() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
-// --- CONNECTED SKIP BUTTON LOGIC ---
-document.getElementById('skip-btn').addEventListener('click', () => {
-    currentQuestionIndex++;
-    
-    // Checks against your actual active topic questions list
-    if (currentQuestionIndex < currentTopicQuestions.length) {
-        loadQuestion(); // Calls your exact loading function
-    } else {
-        showFinalScore(); // Calls your exact scoring function if it's the last question
-    }
-});
+// --- SIMPLE SKIP BUTTON CONNECTED TO NEXTQUESTION ---
+document.getElementById('skip-btn').addEventListener('click', nextQuestion);
