@@ -347,3 +347,20 @@ function handleBackNavigation() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+// --- DROP-IN SKIP BUTTON LOGIC ---
+document.getElementById('skip-btn').addEventListener('click', () => {
+    // 1. Move forward by one question index
+    currentQuestionIndex++; 
+    
+    // 2. Check if there are still questions left in your array
+    if (currentQuestionIndex < questions.length) {
+        showQuestion(); // Calls your existing function to render the next question
+    } else {
+        // If it was the last question, wrap up the quiz using your existing end logic
+        if (typeof showScore === "function") {
+            showScore(); 
+        } else {
+            alert("Great job! You have completed all the practice questions.");
+        }
+    }
+});
