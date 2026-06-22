@@ -347,8 +347,9 @@ function handleBackNavigation() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
-// --- PERMANENT SKIP BUTTON ---
-// This runs once when the page loads, making sure the button always works
+// ==========================================
+// ⏭️ PERMANENT SKIP BUTTON DRIVER
+// ==========================================
 document.addEventListener('DOMContentLoaded', () => {
     const skipBtn = document.getElementById('skip-btn');
     if (skipBtn) {
