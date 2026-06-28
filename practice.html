@@ -107,9 +107,9 @@
             <span id="current-score" class="font-bold text-2xl text-blue-700 bg-blue-50 px-4 py-2 rounded-xl border border-blue-100">Score: 0</span>
         </div>
      <div class="flex items-center gap-3">
-    <button id="prev-btn" onclick="previousQuestion()" class="text-blue-900 hover:text-blue-950 bg-slate-200 hover:bg-slate-300 px-4 py-2 rounded-lg border border-slate-400 shadow-sm transition-colors">
-        ⏮️ Prev
-    </button>
+   <button id="prev-btn" onclick="if(typeof currentQuestionIndex !== 'undefined' && currentQuestionIndex > 0) { currentQuestionIndex--; loadQuestion(); } else { alert('You are already on the first question!'); }" class="text-blue-900 hover:text-blue-950 bg-slate-200 hover:bg-slate-300 px-5 py-2 rounded-full border border-slate-400 shadow-sm transition-colors font-semibold">
+    ⏮️ Prev
+</button>
 
     <button onclick="nextQuestion()" class="text-blue-900 hover:text-blue-950 bg-yellow-400 hover:bg-yellow-500 px-4 py-2 rounded-lg border border-yellow-500 shadow-sm transition-colors">
         ⏭️ Skip
