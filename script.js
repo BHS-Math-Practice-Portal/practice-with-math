@@ -368,3 +368,15 @@ window.previousQuestion = function() {
         alert("You are already on the first question!");
     }
 };
+// This hooks into the button internally so scope doesn't matter!
+const prevButtonElement = document.getElementById('prev-btn');
+if (prevButtonElement) {
+    prevButtonElement.addEventListener('click', function() {
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            loadQuestion();
+        } else {
+            alert("You are already on the first question!");
+        }
+    });
+}
