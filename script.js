@@ -231,8 +231,20 @@ function startPractice(questions) {
     showView('practice');
     const skipBtn = document.getElementById('skip-btn');
     if (skipBtn) skipBtn.onclick = nextQuestion;
+    const prevBtn = document.getElementById('prev-btn');
+    if (prevBtn) {
+        // This physically overrides whatever broken 'onclick' is stuck in your HTML cache!
+        prevBtn.removeAttribute('onclick'); 
+        prevBtn.onclick = function() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            } else {
+                alert("You are already on the first question!");
+            }
+        };
 }
-
+}
 function quitPractice() {
     clearInterval(timerInterval);
     showQuestionTypes(currentTopic, currentPendingQuestions);
