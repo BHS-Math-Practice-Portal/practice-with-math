@@ -239,6 +239,17 @@ function quitPractice() {
 }
 
 function loadQuestion() {
+    const prevBtn = document.getElementById('prev-btn');
+    if (prevBtn) {
+        prevBtn.onclick = function() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            } else {
+                alert("You are already on the first question!");
+            }
+        };
+    }    
     const q = currentTopicQuestions[currentQuestionIndex];
     document.getElementById('feedback-container').classList.add('hidden');
     document.getElementById('next-btn').classList.add('hidden');
