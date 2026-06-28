@@ -258,15 +258,20 @@ function loadQuestion() {
     const qTypeRaw = q.Question_Type || q.question_type || q['Question Type'] || 'MCQ';
     const qType = String(qTypeRaw).toUpperCase().trim();
 
-    if (qType === 'MCQ') {
+   if (qType === 'MCQ') {
+        // Enforce the 2-column rule directly via code
+        optionsContainer.className = "grid grid-cols-1 sm:grid-cols-2 gap-4 w-full";
+        
         [q.Option_A, q.Option_B, q.Option_C, q.Option_D].forEach(opt => {
             if (!opt) return; 
             const btn = document.createElement('button');
+            // 'option-btn' handles style, the grid wrapper handles width
             btn.className = 'option-btn text-left bg-slate-50 border-4 border-slate-200 hover:border-blue-500 hover:bg-blue-50 text-2xl font-bold py-5 px-6 rounded-xl w-full';
             btn.innerText = opt;
             btn.onclick = () => checkAnswer(btn, opt, q.Correct_Answer, q.Explanation, 'MCQ');
             optionsContainer.appendChild(btn);
         });
+    }
     } else if (qType === 'TF' || qType === 'T/F') {
         ['True', 'False'].forEach(opt => {
             const btn = document.createElement('button');
