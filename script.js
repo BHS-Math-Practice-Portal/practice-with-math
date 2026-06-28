@@ -1,17 +1,4 @@
 // ==========================================
-// ↩️ GLOBAL PREVIOUS QUESTION NAVIGATION (LINE 1 OVERRIDE)
-// ==========================================
-window.previousQuestion = function() {
-    if (typeof currentQuestionIndex !== 'undefined' && currentQuestionIndex > 0) {
-        currentQuestionIndex--;
-        if (typeof loadQuestion === 'function') {
-            loadQuestion();
-        }
-    } else {
-        alert("You are already on the first question!");
-    }
-};
-// ==========================================
 // 🛑 YOUR GOOGLE SHEET CSV LINK
 // ==========================================
 const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQi3wglj0KY9gukaN6oVdot2tKiUEWcfxXi_0ZSO3QUttnUz2UriGxceXnHk9Sm25I7L-7MwbPzK9Rt/pub?output=csv"; 
