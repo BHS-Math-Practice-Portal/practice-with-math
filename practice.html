@@ -106,14 +106,19 @@
             <span id="timer-display" class="font-bold text-2xl text-slate-700 bg-slate-100 px-4 py-2 rounded-xl">⏱️ 00:00</span>
             <span id="current-score" class="font-bold text-2xl text-blue-700 bg-blue-50 px-4 py-2 rounded-xl border border-blue-100">Score: 0</span>
         </div>
-        <div class="flex items-center gap-3">
-            <button onclick="nextQuestion()" class="text-blue-900 hover:text-blue-950 bg-yellow-400 hover:bg-yellow-500 px-5 py-2 rounded-full border border-yellow-500 shadow-sm transition-colors font-semibold">
-                ⏭️ Skip
-            </button>
-            <button onclick="quitPractice()" class="text-red-600 hover:text-red-800 bg-red-100 hover:bg-red-200 px-4 py-2 rounded-lg border border-red-300 shadow-sm transition-colors">
-                ❌ Quit
-            </button>
-        </div>
+     <div class="flex items-center gap-3">
+    <button id="prev-btn" onclick="previousQuestion()" class="text-blue-900 hover:text-blue-950 bg-slate-200 hover:bg-slate-300 px-5 py-2 rounded-full border border-slate-400 shadow-sm transition-colors font-semibold">
+        ⏮️ Prev
+    </button>
+
+    <button onclick="nextQuestion()" class="text-blue-900 hover:text-blue-950 bg-yellow-400 hover:bg-yellow-500 px-5 py-2 rounded-full border border-yellow-500 shadow-sm transition-colors font-semibold">
+        ⏭️ Skip
+    </button>
+
+    <button onclick="quitPractice()" class="text-red-600 hover:text-red-800 bg-red-100 hover:bg-red-200 px-4 py-2 rounded-lg border border-red-300 shadow-sm transition-colors">
+        ❌ Quit
+    </button>
+</div>
     </div>
 
     <div class="w-full mb-6">
