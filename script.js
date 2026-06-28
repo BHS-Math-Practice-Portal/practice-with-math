@@ -330,18 +330,8 @@ function nextQuestion() {
     if (currentQuestionIndex < currentTopicQuestions.length) loadQuestion();
     else showFinalScore();
 }
-// ==========================================
-// ↩️ GO BACK TO PREVIOUS QUESTION
-// ==========================================
-function previousQuestion() {
-    // Only go back if we aren't already on the very first question
-    if (currentQuestionIndex > 0) {
-        currentQuestionIndex--;
-        loadQuestion();
-    } else {
-        alert("You are already on the first question!");
-    }
-}
+
+
 function updateScoreDisplay() {
     document.getElementById('current-score').innerText = `Score: ${score}`;
 }
@@ -367,3 +357,14 @@ function handleBackNavigation() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+// Force the browser to link the HTML click to this function globally
+window.previousQuestion = function() {
+    if (typeof currentQuestionIndex !== 'undefined' && currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        if (typeof loadQuestion === 'function') {
+            loadQuestion();
+        }
+    } else {
+        alert("You are already on the first question!");
+    }
+};
