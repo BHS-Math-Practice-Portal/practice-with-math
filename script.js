@@ -15,6 +15,7 @@ let timerInterval;
 let secondsElapsed = 0;
 let audioCtx;
 
+// Helper to get column data regardless of exact header casing/naming
 function getChapterName(q) {
     return q.Chapter_Number_Name || q.Topic || q.topic || "";
 }
@@ -226,9 +227,12 @@ function startPractice(questions) {
     updateScoreDisplay();
     loadQuestion();
     showView('practice');
+    const skipBtn = document.getElementById('skip-btn');
+    if (skipBtn) skipBtn.onclick = nextQuestion;
     
     const prevBtn = document.getElementById('prev-btn');
     if (prevBtn) {
+        prevBtn.removeAttribute('onclick'); 
         prevBtn.onclick = function() {
             if (currentQuestionIndex > 0) {
                 currentQuestionIndex--;
@@ -278,6 +282,7 @@ function loadQuestion() {
 
     if (qType === 'MCQ') {
         optionsContainer.className = "grid grid-cols-1 sm:grid-cols-2 gap-4 w-full";
+        
         [q.Option_A, q.Option_B, q.Option_C, q.Option_D].forEach(opt => {
             if (!opt) return; 
             const btn = document.createElement('button');
@@ -325,30 +330,22 @@ function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType)
     }
 
     const fb = document.getElementById('feedback-container');
-    fb.classList.remove('hidden', 'bg-green-100', 'bg-red-100', 'border-green-500', 'border-red-500');
+    fb.classList.remove('hidden', 'bg-green-100', 'bg-red-100');
     
     if (isCorrect) {
         score++;
         updateScoreDisplay();
         playSound('correct');
-        fb.classList.add('bg-green-100', 'border-green-500');
+        fb.classList.add('bg-green-100');
         document.getElementById('feedback-message').innerText = '✅ Correct!';
     } else {
         playSound('incorrect');
-        fb.classList.add('bg-red-100', 'border-red-500');
+        fb.classList.add('bg-red-100');
         document.getElementById('feedback-message').innerText = qType === 'FIB' ? `❌ Incorrect. Answer: ${correctText}` : '❌ Incorrect';
     }
     
-    const expText = document.getElementById('explanation-text');
-    if (explanation && explanation.trim() !== '') {
-        expText.innerText = `Explanation: ${explanation}`;
-        expText.classList.remove('hidden');
-    } else {
-        expText.innerText = '';
-        expText.classList.add('hidden');
-    }
-    
-    fb.classList.remove('hidden');
+    // Original presentation: safely write content directly to explanation node
+    document.getElementById('explanation-text').innerText = explanation ? `Explanation: ${explanation}` : '';
     document.getElementById('next-btn').classList.remove('hidden');
 }
 
