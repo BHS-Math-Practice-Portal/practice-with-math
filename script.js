@@ -69,11 +69,11 @@ function playSound(type) {
         oscillator.stop(audioCtx.currentTime + 0.3);
     }
 }
+
 function preloadImages(questionsArray) {
     questionsArray.forEach(q => {
         if (q.Image_URL && q.Image_URL.trim() !== '') {
             const img = new Image();
-            // Catch image loading errors quietly so they don't crash the script
             img.onerror = function() {
                 console.warn("Skipping broken database image link:", q.Image_URL);
             };
@@ -81,6 +81,7 @@ function preloadImages(questionsArray) {
         }
     });
 }
+
 function init() {
     document.getElementById('loading-screen').classList.remove('hidden');
     Papa.parse(GOOGLE_SHEET_URL, {
@@ -131,7 +132,6 @@ function showTopics(selectedGrade) {
     
     const gradeQuestions = allQuestions.filter(q => q.Grade == selectedGrade);
     
-    // Use the helper to find unique chapters
     const topics = [...new Set(gradeQuestions.map(q => getChapterName(q)))].filter(Boolean).sort((a, b) => {
         return a.localeCompare(b, undefined, {numeric: true, sensitivity: 'base'});
     });   
@@ -166,13 +166,10 @@ function showQuestionTypes(topic, questionsForTopic) {
     const oldBox = document.getElementById('worksheet-box');
     if (oldBox) oldBox.remove();
 
-    // --- SMART FILENAME LOGIC ---
-    // This takes the currentGrade (e.g., 1) and the topic (e.g., "1: Numbers")
-    // and turns it into "G1-1-Numbers.pdf"
     const cleanTopic = topic.replace(/[:]/g, '')
-                             .replace(/\s+/g, '-')
-                             .replace(/-+/g, '-')
-                             .trim();
+                            .replace(/\s+/g, '-')
+                            .replace(/-+/g, '-')
+                            .trim();
     
     const safeFileName = `G${currentGrade}-${cleanTopic}`;
 
@@ -191,6 +188,7 @@ function showQuestionTypes(topic, questionsForTopic) {
     typeView.appendChild(worksheetDiv);
     showView('type');
 }
+
 function startPracticeFilter(selectedType) {
     let filteredQuestions = currentPendingQuestions;
     if (selectedType !== 'ALL') {
@@ -231,9 +229,9 @@ function startPractice(questions) {
     showView('practice');
     const skipBtn = document.getElementById('skip-btn');
     if (skipBtn) skipBtn.onclick = nextQuestion;
+    
     const prevBtn = document.getElementById('prev-btn');
     if (prevBtn) {
-        // This physically overrides whatever broken 'onclick' is stuck in your HTML cache!
         prevBtn.removeAttribute('onclick'); 
         prevBtn.onclick = function() {
             if (currentQuestionIndex > 0) {
@@ -243,8 +241,9 @@ function startPractice(questions) {
                 alert("You are already on the first question!");
             }
         };
+    }
 }
-}
+
 function quitPractice() {
     clearInterval(timerInterval);
     showQuestionTypes(currentTopic, currentPendingQuestions);
@@ -265,7 +264,7 @@ function loadQuestion() {
     const q = currentTopicQuestions[currentQuestionIndex];
     document.getElementById('feedback-container').classList.add('hidden');
     document.getElementById('next-btn').classList.add('hidden');
-     document.getElementById('progress-text').innerText = `Question ${currentQuestionIndex + 1} of ${currentTopicQuestions.length}`;
+    document.getElementById('progress-text').innerText = `Question ${currentQuestionIndex + 1} of ${currentTopicQuestions.length}`;
     document.getElementById('question-text').innerText = q.Question_Text;
 
     const imgElement = document.getElementById('question-image');
@@ -281,21 +280,19 @@ function loadQuestion() {
     const qTypeRaw = q.Question_Type || q.question_type || q['Question Type'] || 'MCQ';
     const qType = String(qTypeRaw).toUpperCase().trim();
 
-   if (qType === 'MCQ') {
-        // Enforce the 2-column rule directly via code
+    if (qType === 'MCQ') {
         optionsContainer.className = "grid grid-cols-1 sm:grid-cols-2 gap-4 w-full";
         
         [q.Option_A, q.Option_B, q.Option_C, q.Option_D].forEach(opt => {
             if (!opt) return; 
             const btn = document.createElement('button');
-            // 'option-btn' handles style, the grid wrapper handles width
             btn.className = 'option-btn text-left bg-slate-50 border-4 border-slate-200 hover:border-blue-500 hover:bg-blue-50 text-2xl font-bold py-5 px-6 rounded-xl w-full';
             btn.innerText = opt;
             btn.onclick = () => checkAnswer(btn, opt, q.Correct_Answer, q.Explanation, 'MCQ');
             optionsContainer.appendChild(btn);
         });
-    }
     } else if (qType === 'TF' || qType === 'T/F') {
+        optionsContainer.className = "grid grid-cols-1 sm:grid-cols-2 gap-4 w-full";
         ['True', 'False'].forEach(opt => {
             const btn = document.createElement('button');
             btn.className = 'option-btn text-center bg-slate-50 border-4 border-slate-200 hover:border-blue-500 hover:bg-blue-50 text-2xl font-bold py-5 px-6 rounded-xl w-full';
@@ -304,6 +301,7 @@ function loadQuestion() {
             optionsContainer.appendChild(btn);
         });
     } else if (qType === 'FIB') {
+        optionsContainer.className = "block w-full";
         optionsContainer.innerHTML = `
             <input type="text" id="fib-input" placeholder="Type answer here..." class="w-full text-2xl font-bold py-5 px-6 rounded-xl border-4 border-slate-300 focus:border-blue-500 mb-4 text-center">
             <button id="fib-submit" class="w-full md:w-1/2 mx-auto block bg-blue-600 text-white font-bold py-4 rounded-xl text-xl">Submit</button>
@@ -317,7 +315,7 @@ function loadQuestion() {
 }
 
 function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType) {
-     const sel = String(selectedText).trim().toLowerCase();
+    const sel = String(selectedText).trim().toLowerCase();
     const cor = String(correctText).trim().toLowerCase();
     const isCorrect = sel === cor;
 
@@ -332,7 +330,8 @@ function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType)
     }
 
     const fb = document.getElementById('feedback-container');
-    fb.classList.remove('hidden', 'bg-green-100', 'bg-red-100');
+    fb.classList.remove('hidden', 'bg-green-100', 'bg-red-100', 'border-green-500', 'border-red-500');
+    
     if (isCorrect) {
         score++;
         updateScoreDisplay();
@@ -344,7 +343,17 @@ function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType)
         fb.classList.add('bg-red-100', 'border-red-500');
         document.getElementById('feedback-message').innerText = qType === 'FIB' ? `❌ Incorrect. Answer: ${correctText}` : '❌ Incorrect';
     }
-    document.getElementById('explanation-text').innerText = explanation ? `Explanation: ${explanation}` : '';
+    
+    const expText = document.getElementById('explanation-text');
+    if (explanation && explanation.trim() !== '') {
+        expText.innerText = `Explanation: ${explanation}`;
+        expText.classList.remove('hidden');
+    } else {
+        expText.innerText = '';
+        expText.classList.add('hidden');
+    }
+    
+    fb.classList.remove('hidden');
     document.getElementById('next-btn').classList.remove('hidden');
 }
 
@@ -353,7 +362,6 @@ function nextQuestion() {
     if (currentQuestionIndex < currentTopicQuestions.length) loadQuestion();
     else showFinalScore();
 }
-
 
 function updateScoreDisplay() {
     document.getElementById('current-score').innerText = `Score: ${score}`;
@@ -380,6 +388,7 @@ function handleBackNavigation() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
 // Force the browser to link the HTML click to this function globally
 window.previousQuestion = function() {
     if (typeof currentQuestionIndex !== 'undefined' && currentQuestionIndex > 0) {
@@ -391,15 +400,3 @@ window.previousQuestion = function() {
         alert("You are already on the first question!");
     }
 };
-// This hooks into the button internally so scope doesn't matter!
-const prevButtonElement = document.getElementById('prev-btn');
-if (prevButtonElement) {
-    prevButtonElement.addEventListener('click', function() {
-        if (currentQuestionIndex > 0) {
-            currentQuestionIndex--;
-            loadQuestion();
-        } else {
-            alert("You are already on the first question!");
-        }
-    });
-}
