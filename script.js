@@ -265,9 +265,7 @@ function loadQuestion() {
     const q = currentTopicQuestions[currentQuestionIndex];
     document.getElementById('feedback-container').classList.add('hidden');
     document.getElementById('next-btn').classList.add('hidden');
-    const thinkBox = document.getElementById('thinking-illustration-box');
-    if (thinkBox) thinkBox.classList.remove('hidden');
-    document.getElementById('progress-text').innerText = `Question ${currentQuestionIndex + 1} of ${currentTopicQuestions.length}`;
+     document.getElementById('progress-text').innerText = `Question ${currentQuestionIndex + 1} of ${currentTopicQuestions.length}`;
     document.getElementById('question-text').innerText = q.Question_Text;
 
     const imgElement = document.getElementById('question-image');
@@ -319,12 +317,7 @@ function loadQuestion() {
 }
 
 function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType) {
-    const thinkBox = document.getElementById('thinking-illustration-box');
-    if (thinkBox) thinkBox.classList.add('hidden');
-
-    const fb = document.getElementById('feedback-container');
-    fb.classList.remove('hidden', 'bg-green-100', 'bg-red-100');
-    const sel = String(selectedText).trim().toLowerCase();
+     const sel = String(selectedText).trim().toLowerCase();
     const cor = String(correctText).trim().toLowerCase();
     const isCorrect = sel === cor;
 
