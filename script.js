@@ -262,8 +262,12 @@ function loadQuestion() {
         };
     }    
     const q = currentTopicQuestions[currentQuestionIndex];
+    
+    // --- RESET VIEW STATE FOR IN-PLACE SWAP ---
     document.getElementById('feedback-container').classList.add('hidden');
     document.getElementById('next-btn').classList.add('hidden');
+    document.getElementById('mascot-container').classList.remove('hidden'); // Show Mascot
+    
     document.getElementById('progress-text').innerText = `Question ${currentQuestionIndex + 1} of ${currentTopicQuestions.length}`;
     document.getElementById('question-text').innerText = q.Question_Text;
 
@@ -329,6 +333,9 @@ function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType)
         });
     }
 
+    // --- SWAP RUNTIME: HIDE MASCOT IMAGE INSTANTLY ---
+    document.getElementById('mascot-container').classList.add('hidden');
+
     const fb = document.getElementById('feedback-container');
     fb.classList.remove('hidden', 'bg-green-100', 'bg-red-100');
     
@@ -344,8 +351,11 @@ function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType)
         document.getElementById('feedback-message').innerText = qType === 'FIB' ? `❌ Incorrect. Answer: ${correctText}` : '❌ Incorrect';
     }
     
-    // Original presentation: safely write content directly to explanation node
+    // Write out the content directly to your explanation node inside the swap zone
     document.getElementById('explanation-text').innerText = explanation ? `Explanation: ${explanation}` : '';
+    
+    // Unhide the card elements in place
+    fb.classList.remove('hidden');
     document.getElementById('next-btn').classList.remove('hidden');
 }
 
