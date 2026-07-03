@@ -2,7 +2,6 @@
 // 🛑 YOUR GOOGLE SHEET CSV LINK
 // ==========================================
 const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQi3wglj0KY9gukaN6oVdot2tKiUEWcfxXi_0ZSO3QUttnUz2UriGxceXnHk9Sm25I7L-7MwbPzK9Rt/pub?output=csv"; [cite: 184]
-
 let allQuestions = [];
 let currentPendingQuestions = [];
 let currentTopicQuestions = []; [cite: 185]
