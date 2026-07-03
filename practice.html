@@ -130,26 +130,26 @@
                             <div id="options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full"></div>
                         </div>
 
-                <div class="w-full lg:w-2/5 flex flex-col justify-start">
-                            
-                            <div id="mascot-container" class="w-full flex flex-col items-center justify-center">
-                                <div class="w-full max-w-[320px] aspect-square overflow-hidden rounded-2xl flex items-center justify-center bg-transparent transition-transform hover:scale-105 duration-300">
-                                    <img src="thinking.gif?v=1" alt="Mascot Companion" class="w-[125%] h-[125%] object-cover pointer-events-none mix-blend-multiply">
-                                    
-                                </div>
-                                <p class="text-blue-950 font-black text-xl mt-4 tracking-wide text-center bg-white border-2 border-blue-200 px-5 py-2 rounded-full shadow-md animate-pulse">
-                                    Keep Going, you can do it! ⚡
-                                </p>
-                            </div>
+               <div class="w-full lg:w-2/5 flex flex-col justify-start min-h-[360px]">
+    
+    <div id="mascot-container" class="w-full flex flex-col items-center justify-center">
+        <div class="w-full max-w-[320px] aspect-square overflow-hidden rounded-2xl flex items-center justify-center bg-transparent transition-transform hover:scale-105 duration-300">
+            <img src="thinking.gif?v=1" alt="Mascot Companion" class="w-[125%] h-[125%] object-cover pointer-events-none mix-blend-multiply">
+        </div>
+        <p class="text-blue-950 font-black text-xl mt-4 tracking-wide text-center bg-white border-2 border-blue-200 px-5 py-2 rounded-full shadow-md animate-pulse">
+            Keep Going, you can do it! ⚡
+        </p>
+    </div>
 
-                            <div id="feedback-container" class="hidden border-4 rounded-2xl p-5 shadow-md bg-white w-full h-full flex flex-col justify-center">
-                                <p id="feedback-message" class="font-black text-2xl mb-2"></p>
-                                <p id="explanation-text" class="text-slate-700 font-semibold text-base bg-slate-50 p-3 rounded-xl border border-slate-200 my-2"></p>
-                                <button id="next-btn" onclick="nextQuestion()" class="hidden w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xl py-4 px-6 rounded-xl shadow-md transition-all text-center mt-2">
-                                    Next Question ➡️
-                                </button>
-                            </div>
-                        </div>
+    <div id="feedback-container" class="hidden border-4 rounded-2xl p-5 shadow-md bg-white w-full h-full flex flex-col justify-center">
+        <p id="feedback-message" class="font-black text-2xl mb-2"></p>
+        <p id="explanation-text" class="text-slate-700 font-semibold text-base bg-slate-50 p-3 rounded-xl border border-slate-200 my-2"></p>
+        <button id="next-btn" onclick="nextQuestion()" class="hidden w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xl py-4 px-6 rounded-xl shadow-md transition-all text-center mt-2">
+            Next Question ➡️
+        </button>
+    </div>
+
+</div>
                 </div> <div id="score-view" class="hidden text-center py-10">
                     <h2 class="text-5xl font-extrabold mb-6 text-slate-800">Practice Complete!</h2>
                     <p class="text-3xl mb-4 font-medium text-slate-700">You scored <span id="final-score" class="text-blue-600 font-black text-4xl"></span> out of <span id="total-questions" class="font-bold text-4xl"></span>.</p>
