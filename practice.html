@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Baroda High School - Math Practice</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -129,7 +130,16 @@
                             <div id="options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full"></div>
                         </div>
 
-                        <div class="w-full lg:w-2/5 flex flex-col justify-start">                   
+                        <div class="w-full lg:w-2/5 flex flex-col justify-start">
+                            
+                            <div id="mascot-container" class="w-full flex flex-col items-center justify-center">
+                                <div class="w-full max-w-[320px] transition-transform hover:scale-105 duration-300">
+                                    <img src="thinking.gif?v=1" alt="Mascot Companion" class="w-full h-auto object-contain pointer-events-none mix-blend-multiply">
+                                </div>
+                                <p class="text-blue-950 font-black text-xl mt-4 tracking-wide text-center bg-white border-2 border-blue-200 px-5 py-2 rounded-full shadow-md animate-pulse">
+                                    Keep Going, you can do it! ⚡
+                                </p>
+                            </div>
 
                             <div id="feedback-container" class="hidden border-4 rounded-2xl p-5 shadow-md bg-white w-full h-full flex flex-col justify-center">
                                 <p id="feedback-message" class="font-black text-2xl mb-2"></p>
