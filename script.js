@@ -221,25 +221,27 @@ function startPractice(questions) {
     updateScoreDisplay();
     loadQuestion();
     showView('practice');
-    
-    // Previous Question Overriding setup
-    const prevBtn = document.getElementById('prev-btn');
-    if (prevBtn) {
-        prevBtn.removeAttribute('onclick');
-        prevBtn.onclick = function() {
-            if (currentQuestionIndex > 0) {
-                currentQuestionIndex--;
-                loadQuestion();
-            } else {
-                alert("You are already on the first question!");
-            }
-        };
-    }
 }
 
 function quitPractice() {
     clearInterval(timerInterval);
     showQuestionTypes(currentTopic, currentPendingQuestions);
+}
+
+// ↩️ NAVIGATION FUNCTIONS
+function previousQuestion() {
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        loadQuestion();
+    } else {
+        alert("You are already on the first question!");
+    }
+}
+
+function nextQuestion() {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < currentTopicQuestions.length) loadQuestion();
+    else showFinalScore();
 }
 
 // Question Screen Loader Routine
@@ -266,30 +268,28 @@ function loadQuestion() {
     const qTypeRaw = q.Question_Type || q.question_type || q['Question Type'] || 'MCQ';
     const qType = String(qTypeRaw).toUpperCase().trim();
     
+    // Custom Option Button Styling for Single-Column Flow within Grid
     if (qType === 'MCQ') {
-        optionsContainer.className = "grid grid-cols-1 sm:grid-cols-2 gap-4 w-full mb-6";
         [q.Option_A, q.Option_B, q.Option_C, q.Option_D].forEach(opt => {
             if (!opt) return; 
             const btn = document.createElement('button');
-            btn.className = 'option-btn text-left bg-slate-50 border-4 border-slate-200 hover:border-blue-500 hover:bg-blue-50 text-2xl font-bold py-5 px-6 rounded-xl w-full';
+            btn.className = 'option-btn text-left bg-slate-50 border-4 border-slate-200 hover:border-blue-500 hover:bg-blue-50 text-2xl font-bold py-5 px-6 rounded-xl w-full transition-all';
             btn.innerText = opt;
             btn.onclick = () => checkAnswer(btn, opt, q.Correct_Answer, q.Explanation, 'MCQ');
             optionsContainer.appendChild(btn);
         });
     } else if (qType === 'TF' || qType === 'T/F') {
-        optionsContainer.className = "grid grid-cols-1 sm:grid-cols-2 gap-4 w-full mb-6";
         ['True', 'False'].forEach(opt => {
             const btn = document.createElement('button');
-            btn.className = 'option-btn text-center bg-slate-50 border-4 border-slate-200 hover:border-blue-500 hover:bg-blue-50 text-2xl font-bold py-5 px-6 rounded-xl w-full';
+            btn.className = 'option-btn text-center bg-slate-50 border-4 border-slate-200 hover:border-blue-500 hover:bg-blue-50 text-2xl font-bold py-5 px-6 rounded-xl w-full transition-all';
             btn.innerText = opt;
             btn.onclick = () => checkAnswer(btn, opt, q.Correct_Answer, q.Explanation, 'TF');
             optionsContainer.appendChild(btn);
         });
     } else if (qType === 'FIB') {
-        optionsContainer.className = "block w-full mb-6";
         optionsContainer.innerHTML = `
-            <input type="text" id="fib-input" placeholder="Type answer here..." class="w-full text-2xl font-bold py-5 px-6 rounded-xl border-4 border-slate-300 focus:border-blue-500 mb-4 text-center">
-            <button id="fib-submit" class="w-full md:w-1/2 mx-auto block bg-blue-600 text-white font-bold py-4 rounded-xl text-xl">Submit</button>
+            <input type="text" id="fib-input" placeholder="Type answer here..." class="w-full text-2xl font-bold py-5 px-6 rounded-xl border-4 border-slate-300 focus:border-blue-500 mb-2 text-center">
+            <button id="fib-submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl text-xl transition-colors">Submit Answer</button>
         `;
         const input = document.getElementById('fib-input');
         const sub = document.getElementById('fib-submit');
@@ -335,12 +335,6 @@ function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType)
     document.getElementById('next-btn').classList.remove('hidden');
 }
 
-function nextQuestion() {
-    currentQuestionIndex++;
-    if (currentQuestionIndex < currentTopicQuestions.length) loadQuestion();
-    else showFinalScore();
-}
-
 function updateScoreDisplay() {
     document.getElementById('current-score').innerText = `Score: ${score}`;
 }
@@ -368,12 +362,5 @@ function handleBackNavigation() {
 document.addEventListener('DOMContentLoaded', init);
 
 // Expose navigation properties explicitly to global browser stack
-window.previousQuestion = function() {
-    if (currentQuestionIndex > 0) {
-        currentQuestionIndex--;
-        loadQuestion();
-    } else {
-        alert("You are already on the first question!");
-    }
-};
+window.previousQuestion = previousQuestion;
 window.nextQuestion = nextQuestion;
