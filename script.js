@@ -1,7 +1,7 @@
 // ==========================================
 // 🛑 YOUR GOOGLE SHEET CSV LINK
 // ==========================================
-const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQi3wglj0KY9gukaN6oVdot2tKiUEWcfxXi_0ZSO3QUttnUz2UriGxceXnHk9Sm25I7L-7MwbPzK9Rt/pub?output=csv"; 
+const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQi3wglj0KY9gukaN6oVdot2tKiUEWcfxXi_0ZSO3QUttnUz2UriGxceXnHk9Sm25I7L-7MwbPzK9Rt/pub?output=csv";
 
 let allQuestions = [];
 let currentPendingQuestions = [];
@@ -10,7 +10,6 @@ let currentQuestionIndex = 0;
 let score = 0;
 let currentGrade = ''; 
 let currentTopic = '';
-
 let timerInterval;
 let secondsElapsed = 0;
 let audioCtx;
@@ -31,6 +30,7 @@ function getViews() {
     };
 }
 
+// Global View Switcher Controller
 function showView(viewName) {
     const views = getViews();
     Object.values(views).forEach(v => {
@@ -41,6 +41,7 @@ function showView(viewName) {
     }
 }
 
+// Audio System Configuration
 function playSound(type) {
     if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -53,8 +54,8 @@ function playSound(type) {
     
     if (type === 'correct') {
         oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime); 
-        oscillator.frequency.exponentialRampToValueAtTime(1046.50, audioCtx.currentTime + 0.1); 
+        oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(1046.50, audioCtx.currentTime + 0.1);
         gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
         gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
         oscillator.start();
@@ -77,11 +78,12 @@ function preloadImages(questionsArray) {
             img.onerror = function() {
                 console.warn("Skipping broken database image link:", q.Image_URL);
             };
-            img.src = q.Image_URL.trim(); 
+            img.src = q.Image_URL.trim();
         }
     });
 }
 
+// System Boot Routine
 function init() {
     document.getElementById('loading-screen').classList.remove('hidden');
     Papa.parse(GOOGLE_SHEET_URL, {
@@ -110,8 +112,7 @@ function showGrades() {
     
     const grades = [...new Set(allQuestions.map(q => q.Grade))]
         .filter(Boolean)
-        .sort((a, b) => a - b);    
-        
+        .sort((a, b) => a - b);
     const container = document.getElementById('grade-buttons');
     container.innerHTML = '';
     grades.forEach(grade => {
@@ -129,17 +130,13 @@ function showTopics(selectedGrade) {
     document.getElementById('nav-back-topics').classList.add('hidden');
     currentGrade = selectedGrade; 
     document.getElementById('selected-grade-title').innerText = `Grade ${selectedGrade} - Select Chapter`;
-    
     const gradeQuestions = allQuestions.filter(q => q.Grade == selectedGrade);
     
     const topics = [...new Set(gradeQuestions.map(q => getChapterName(q)))].filter(Boolean).sort((a, b) => {
         return a.localeCompare(b, undefined, {numeric: true, sensitivity: 'base'});
-    });   
-    
+    });
     const container = document.getElementById('topic-buttons');
     container.innerHTML = '';
-    container.className = "grid grid-cols-1 md:grid-cols-2 gap-4 w-full";
-
     topics.forEach(topic => {
         const btn = document.createElement('button');
         btn.className = 'flex items-center text-left bg-white border-l-8 border-blue-600 border-t border-r border-b border-slate-200 hover:border-blue-500 hover:bg-blue-50 p-5 rounded-r-xl shadow-sm transition-all hover:scale-[1.02]';
@@ -161,16 +158,13 @@ function showQuestionTypes(topic, questionsForTopic) {
     currentTopic = topic;
     currentPendingQuestions = questionsForTopic;
     document.getElementById('selected-topic-title').innerText = topic;
-
     const typeView = document.getElementById('type-view');
     const oldBox = document.getElementById('worksheet-box');
     if (oldBox) oldBox.remove();
-
     const cleanTopic = topic.replace(/[:]/g, '')
-                             .replace(/\s+/g, '-')
-                             .replace(/-+/g, '-')
-                             .trim();
-    
+                            .replace(/\s+/g, '-')
+                            .replace(/-+/g, '-')
+                            .trim();
     const safeFileName = `G${currentGrade}-${cleanTopic}`;
 
     const worksheetDiv = document.createElement('div');
@@ -227,13 +221,11 @@ function startPractice(questions) {
     updateScoreDisplay();
     loadQuestion();
     showView('practice');
-    const skipBtn = document.getElementById('skip-btn');
-    if (skipBtn) skipBtn.onclick = nextQuestion;
-
-const prevBtn = document.getElementById('prev-btn');
+    
+    // Previous Question Overriding setup
+    const prevBtn = document.getElementById('prev-btn');
     if (prevBtn) {
-        // This physically overrides whatever broken 'onclick' is stuck in your HTML cache!
-        prevBtn.removeAttribute('onclick'); 
+        prevBtn.removeAttribute('onclick');
         prevBtn.onclick = function() {
             if (currentQuestionIndex > 0) {
                 currentQuestionIndex--;
@@ -245,42 +237,26 @@ const prevBtn = document.getElementById('prev-btn');
     }
 }
 
-
-
-}
-
 function quitPractice() {
     clearInterval(timerInterval);
     showQuestionTypes(currentTopic, currentPendingQuestions);
 }
 
-// ↩️ NAVIGATION FUNCTIONS 
-function previousQuestion() {
-    if (currentQuestionIndex > 0) {
-        currentQuestionIndex--;
-        loadQuestion();
-    } else {
-        alert("You are already on the first question!");
-    }
-}
-
-function nextQuestion() {
-    currentQuestionIndex++;
-    if (currentQuestionIndex < currentTopicQuestions.length) loadQuestion();
-    else showFinalScore();
-}
-
+// Question Screen Loader Routine
 function loadQuestion() {
     const q = currentTopicQuestions[currentQuestionIndex];
+    
+    // Reset layout view state cleanly
     document.getElementById('feedback-container').classList.add('hidden');
     document.getElementById('next-btn').classList.add('hidden');
+
     document.getElementById('progress-text').innerText = `Question ${currentQuestionIndex + 1} of ${currentTopicQuestions.length}`;
     document.getElementById('question-text').innerText = q.Question_Text;
 
     const imgElement = document.getElementById('question-image');
     if (q.Image_URL && q.Image_URL.trim() !== '') {
-        imgElement.src = q.Image_URL.trim(); 
-        imgElement.classList.remove('hidden'); 
+        imgElement.src = q.Image_URL.trim();
+        imgElement.classList.remove('hidden');
     } else {
         imgElement.classList.add('hidden'); 
     }
@@ -289,9 +265,9 @@ function loadQuestion() {
     optionsContainer.innerHTML = '';
     const qTypeRaw = q.Question_Type || q.question_type || q['Question Type'] || 'MCQ';
     const qType = String(qTypeRaw).toUpperCase().trim();
-
+    
     if (qType === 'MCQ') {
-        optionsContainer.className = "grid grid-cols-1 sm:grid-cols-2 gap-4 w-full";
+        optionsContainer.className = "grid grid-cols-1 sm:grid-cols-2 gap-4 w-full mb-6";
         [q.Option_A, q.Option_B, q.Option_C, q.Option_D].forEach(opt => {
             if (!opt) return; 
             const btn = document.createElement('button');
@@ -301,7 +277,7 @@ function loadQuestion() {
             optionsContainer.appendChild(btn);
         });
     } else if (qType === 'TF' || qType === 'T/F') {
-        optionsContainer.className = "grid grid-cols-1 sm:grid-cols-2 gap-4 w-full";
+        optionsContainer.className = "grid grid-cols-1 sm:grid-cols-2 gap-4 w-full mb-6";
         ['True', 'False'].forEach(opt => {
             const btn = document.createElement('button');
             btn.className = 'option-btn text-center bg-slate-50 border-4 border-slate-200 hover:border-blue-500 hover:bg-blue-50 text-2xl font-bold py-5 px-6 rounded-xl w-full';
@@ -310,7 +286,7 @@ function loadQuestion() {
             optionsContainer.appendChild(btn);
         });
     } else if (qType === 'FIB') {
-        optionsContainer.className = "block w-full";
+        optionsContainer.className = "block w-full mb-6";
         optionsContainer.innerHTML = `
             <input type="text" id="fib-input" placeholder="Type answer here..." class="w-full text-2xl font-bold py-5 px-6 rounded-xl border-4 border-slate-300 focus:border-blue-500 mb-4 text-center">
             <button id="fib-submit" class="w-full md:w-1/2 mx-auto block bg-blue-600 text-white font-bold py-4 rounded-xl text-xl">Submit</button>
@@ -323,6 +299,7 @@ function loadQuestion() {
     }
 }
 
+// Answer Evaluation Engine
 function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType) {
     const sel = String(selectedText).trim().toLowerCase();
     const cor = String(correctText).trim().toLowerCase();
@@ -339,7 +316,8 @@ function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType)
     }
 
     const fb = document.getElementById('feedback-container');
-    fb.classList.remove('hidden', 'bg-green-100', 'bg-red-100');
+    fb.classList.remove('hidden', 'bg-green-100', 'bg-red-100', 'border-green-500', 'border-red-500');
+    
     if (isCorrect) {
         score++;
         updateScoreDisplay();
@@ -351,8 +329,16 @@ function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType)
         fb.classList.add('bg-red-100', 'border-red-500');
         document.getElementById('feedback-message').innerText = qType === 'FIB' ? `❌ Incorrect. Answer: ${correctText}` : '❌ Incorrect';
     }
+    
     document.getElementById('explanation-text').innerText = explanation ? `Explanation: ${explanation}` : '';
+    fb.classList.remove('hidden');
     document.getElementById('next-btn').classList.remove('hidden');
+}
+
+function nextQuestion() {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < currentTopicQuestions.length) loadQuestion();
+    else showFinalScore();
 }
 
 function updateScoreDisplay() {
@@ -381,6 +367,13 @@ function handleBackNavigation() {
 
 document.addEventListener('DOMContentLoaded', init);
 
-// Expose navigation rules to global HTML context explicitly
-window.previousQuestion = previousQuestion;
+// Expose navigation properties explicitly to global browser stack
+window.previousQuestion = function() {
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        loadQuestion();
+    } else {
+        alert("You are already on the first question!");
+    }
+};
 window.nextQuestion = nextQuestion;
