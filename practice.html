@@ -46,7 +46,7 @@
 
     <div class="flex-1 w-full overflow-y-auto relative z-10 flex flex-col">
         <div class="flex-1 w-full max-w-7xl mx-auto p-6 md:p-10 flex flex-col items-center">
-            <main id="app-container" class="max-w-4xl w-full bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-10 min-h-[500px] border border-slate-100">
+            <main id="app-container" class="max-w-5xl w-full bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-10 min-h-[500px] border border-slate-100">
           
                 <div class="flex flex-wrap items-center justify-between w-full mb-6 pb-4 border-b-2 border-slate-100">
                     <div class="flex gap-4">
@@ -103,7 +103,7 @@
                             <span id="current-score" class="font-bold text-2xl text-blue-700 bg-blue-50 px-4 py-2 rounded-xl border border-blue-100">Score: 0</span>
                         </div>
                         <div class="flex items-center gap-3">
-                            <button id="prev-btn" class="text-blue-900 hover:text-blue-950 bg-slate-200 hover:bg-green-300 px-4 py-2 rounded-lg border border-slate-400 shadow-sm transition-colors font-semibold">
+                            <button id="prev-btn" onclick="previousQuestion()" class="text-blue-900 hover:text-blue-950 bg-slate-200 hover:bg-green-300 px-4 py-2 rounded-lg border border-slate-400 shadow-sm transition-colors font-semibold">
                                 ⏮️ Prev
                             </button>
                             <button id="skip-btn" onclick="nextQuestion()" class="text-blue-900 hover:text-blue-950 bg-yellow-400 hover:bg-yellow-500 px-4 py-2 rounded-lg border border-yellow-500 shadow-sm transition-colors font-semibold">
@@ -123,14 +123,20 @@
                         <img id="question-image" src="" alt="Question Diagram" class="hidden max-w-md w-full max-h-64 object-contain rounded-2xl border-2 border-slate-100 p-2 bg-white shadow-inner mx-auto mt-4">
                     </div>
 
-                    <div id="options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full mb-6"></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start w-full mb-6">
+                        
+                        <div id="options-container" class="flex flex-col gap-4 w-full"></div>
 
-                    <div id="feedback-container" class="hidden border-4 rounded-2xl p-5 shadow-md bg-white w-full mb-4">
-                        <p id="feedback-message" class="font-black text-2xl mb-2"></p>
-                        <p id="explanation-text" class="text-slate-700 font-semibold text-base bg-slate-50 p-3 rounded-xl border border-slate-200 my-2"></p>
-                        <button id="next-btn" onclick="nextQuestion()" class="hidden w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xl py-4 px-6 rounded-xl shadow-md transition-all text-center mt-4">
-                            Next Question ➡️
-                        </button>
+                        <div id="feedback-container" class="hidden border-4 rounded-2xl p-5 shadow-md bg-white w-full h-full flex flex-col justify-between min-h-[220px]">
+                            <div>
+                                <p id="feedback-message" class="font-black text-2xl mb-2"></p>
+                                <p id="explanation-text" class="text-slate-700 font-semibold text-base bg-slate-50 p-3 rounded-xl border border-slate-200 my-2"></p>
+                            </div>
+                            <button id="next-btn" onclick="nextQuestion()" class="hidden w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xl py-4 px-6 rounded-xl shadow-md transition-all text-center mt-4">
+                                Next Question ➡️
+                            </button>
+                        </div>
+                        
                     </div>
 
                 </div>
