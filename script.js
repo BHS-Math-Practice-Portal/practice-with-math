@@ -1,7 +1,7 @@
 // ==========================================
 // 🛑 YOUR GOOGLE SHEET CSV LINK
 // ==========================================
-const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQi3wglj0KY9gukaN6oVdot2tKiUEWcfxXi_0ZSO3QUttnUz2UriGxceXnHk9Sm25I7L-7MwbPzK9Rt/pub?output=csv";
+const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQi3wglj0KY9gukaN6oVdot2tKiUEWcfxXi_0ZSO3QUttnUz2UriGxceXnHk9Sm25I7L-7MwbPzK9Rt/pub?output=csv"; 
 
 let allQuestions = [];
 let currentPendingQuestions = [];
@@ -10,6 +10,7 @@ let currentQuestionIndex = 0;
 let score = 0;
 let currentGrade = ''; 
 let currentTopic = '';
+
 let timerInterval;
 let secondsElapsed = 0;
 let audioCtx;
@@ -30,7 +31,6 @@ function getViews() {
     };
 }
 
-// Global View Switcher Controller
 function showView(viewName) {
     const views = getViews();
     Object.values(views).forEach(v => {
@@ -41,7 +41,6 @@ function showView(viewName) {
     }
 }
 
-// Audio System Configuration
 function playSound(type) {
     if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -54,8 +53,8 @@ function playSound(type) {
     
     if (type === 'correct') {
         oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime);
-        oscillator.frequency.exponentialRampToValueAtTime(1046.50, audioCtx.currentTime + 0.1);
+        oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime); 
+        oscillator.frequency.exponentialRampToValueAtTime(1046.50, audioCtx.currentTime + 0.1); 
         gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
         gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
         oscillator.start();
@@ -78,12 +77,11 @@ function preloadImages(questionsArray) {
             img.onerror = function() {
                 console.warn("Skipping broken database image link:", q.Image_URL);
             };
-            img.src = q.Image_URL.trim();
+            img.src = q.Image_URL.trim(); 
         }
     });
 }
 
-// System Boot Routine
 function init() {
     document.getElementById('loading-screen').classList.remove('hidden');
     Papa.parse(GOOGLE_SHEET_URL, {
@@ -112,7 +110,8 @@ function showGrades() {
     
     const grades = [...new Set(allQuestions.map(q => q.Grade))]
         .filter(Boolean)
-        .sort((a, b) => a - b);
+        .sort((a, b) => a - b);    
+        
     const container = document.getElementById('grade-buttons');
     container.innerHTML = '';
     grades.forEach(grade => {
@@ -130,14 +129,17 @@ function showTopics(selectedGrade) {
     document.getElementById('nav-back-topics').classList.add('hidden');
     currentGrade = selectedGrade; 
     document.getElementById('selected-grade-title').innerText = `Grade ${selectedGrade} - Select Chapter`;
+    
     const gradeQuestions = allQuestions.filter(q => q.Grade == selectedGrade);
     
     const topics = [...new Set(gradeQuestions.map(q => getChapterName(q)))].filter(Boolean).sort((a, b) => {
         return a.localeCompare(b, undefined, {numeric: true, sensitivity: 'base'});
-    });
+    });   
+    
     const container = document.getElementById('topic-buttons');
     container.innerHTML = '';
     container.className = "grid grid-cols-1 md:grid-cols-2 gap-4 w-full";
+
     topics.forEach(topic => {
         const btn = document.createElement('button');
         btn.className = 'flex items-center text-left bg-white border-l-8 border-blue-600 border-t border-r border-b border-slate-200 hover:border-blue-500 hover:bg-blue-50 p-5 rounded-r-xl shadow-sm transition-all hover:scale-[1.02]';
@@ -159,13 +161,16 @@ function showQuestionTypes(topic, questionsForTopic) {
     currentTopic = topic;
     currentPendingQuestions = questionsForTopic;
     document.getElementById('selected-topic-title').innerText = topic;
+
     const typeView = document.getElementById('type-view');
     const oldBox = document.getElementById('worksheet-box');
     if (oldBox) oldBox.remove();
+
     const cleanTopic = topic.replace(/[:]/g, '')
-                            .replace(/\s+/g, '-')
-                            .replace(/-+/g, '-')
-                            .trim();
+                             .replace(/\s+/g, '-')
+                             .replace(/-+/g, '-')
+                             .trim();
+    
     const safeFileName = `G${currentGrade}-${cleanTopic}`;
 
     const worksheetDiv = document.createElement('div');
@@ -224,9 +229,11 @@ function startPractice(questions) {
     showView('practice');
     const skipBtn = document.getElementById('skip-btn');
     if (skipBtn) skipBtn.onclick = nextQuestion;
-    const prevBtn = document.getElementById('prev-btn');
+
+const prevBtn = document.getElementById('prev-btn');
     if (prevBtn) {
-        prevBtn.removeAttribute('onclick');
+        // This physically overrides whatever broken 'onclick' is stuck in your HTML cache!
+        prevBtn.removeAttribute('onclick'); 
         prevBtn.onclick = function() {
             if (currentQuestionIndex > 0) {
                 currentQuestionIndex--;
@@ -238,38 +245,42 @@ function startPractice(questions) {
     }
 }
 
+
+
+}
+
 function quitPractice() {
     clearInterval(timerInterval);
     showQuestionTypes(currentTopic, currentPendingQuestions);
 }
 
-// Question Screen Loader Routine
+// ↩️ NAVIGATION FUNCTIONS 
+function previousQuestion() {
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        loadQuestion();
+    } else {
+        alert("You are already on the first question!");
+    }
+}
+
+function nextQuestion() {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < currentTopicQuestions.length) loadQuestion();
+    else showFinalScore();
+}
+
 function loadQuestion() {
-    const prevBtn = document.getElementById('prev-btn');
-    if (prevBtn) {
-        prevBtn.onclick = function() {
-            if (currentQuestionIndex > 0) {
-                currentQuestionIndex--;
-                loadQuestion();
-            } else {
-                alert("You are already on the first question!");
-            }
-        };
-    }    
     const q = currentTopicQuestions[currentQuestionIndex];
-    
-    // --- RESET INTERACTION VIEW STATE FOR SWAP METHOD ---
     document.getElementById('feedback-container').classList.add('hidden');
     document.getElementById('next-btn').classList.add('hidden');
-    document.getElementById('mascot-container').classList.remove('hidden'); // Mascot is pulled back into the view flow
-
     document.getElementById('progress-text').innerText = `Question ${currentQuestionIndex + 1} of ${currentTopicQuestions.length}`;
     document.getElementById('question-text').innerText = q.Question_Text;
 
     const imgElement = document.getElementById('question-image');
     if (q.Image_URL && q.Image_URL.trim() !== '') {
-        imgElement.src = q.Image_URL.trim();
-        imgElement.classList.remove('hidden');
+        imgElement.src = q.Image_URL.trim(); 
+        imgElement.classList.remove('hidden'); 
     } else {
         imgElement.classList.add('hidden'); 
     }
@@ -278,6 +289,7 @@ function loadQuestion() {
     optionsContainer.innerHTML = '';
     const qTypeRaw = q.Question_Type || q.question_type || q['Question Type'] || 'MCQ';
     const qType = String(qTypeRaw).toUpperCase().trim();
+
     if (qType === 'MCQ') {
         optionsContainer.className = "grid grid-cols-1 sm:grid-cols-2 gap-4 w-full";
         [q.Option_A, q.Option_B, q.Option_C, q.Option_D].forEach(opt => {
@@ -311,7 +323,6 @@ function loadQuestion() {
     }
 }
 
-// Answer Evaluation Engine
 function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType) {
     const sel = String(selectedText).trim().toLowerCase();
     const cor = String(correctText).trim().toLowerCase();
@@ -327,33 +338,21 @@ function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType)
         });
     }
 
-    // --- EXECUTE THE SWAP ---
-    document.getElementById('mascot-container').classList.add('hidden'); // Mascot vanishes completely
-    
     const fb = document.getElementById('feedback-container');
     fb.classList.remove('hidden', 'bg-green-100', 'bg-red-100');
-    
     if (isCorrect) {
         score++;
         updateScoreDisplay();
         playSound('correct');
-        fb.classList.add('bg-green-100');
+        fb.classList.add('bg-green-100', 'border-green-500');
         document.getElementById('feedback-message').innerText = '✅ Correct!';
     } else {
         playSound('incorrect');
-        fb.classList.add('bg-red-100');
+        fb.classList.add('bg-red-100', 'border-red-500');
         document.getElementById('feedback-message').innerText = qType === 'FIB' ? `❌ Incorrect. Answer: ${correctText}` : '❌ Incorrect';
     }
-    
     document.getElementById('explanation-text').innerText = explanation ? `Explanation: ${explanation}` : '';
-    fb.classList.remove('hidden'); // Feedback card takes over the freed display slot
     document.getElementById('next-btn').classList.remove('hidden');
-}
-
-function nextQuestion() {
-    currentQuestionIndex++;
-    if (currentQuestionIndex < currentTopicQuestions.length) loadQuestion();
-    else showFinalScore();
 }
 
 function updateScoreDisplay() {
@@ -382,13 +381,6 @@ function handleBackNavigation() {
 
 document.addEventListener('DOMContentLoaded', init);
 
-window.previousQuestion = function() {
-    if (typeof currentQuestionIndex !== 'undefined' && currentQuestionIndex > 0) {
-        currentQuestionIndex--;
-        if (typeof loadQuestion === 'function') {
-            loadQuestion();
-        }
-    } else {
-        alert("You are already on the first question!");
-    }
-};
+// Expose navigation rules to global HTML context explicitly
+window.previousQuestion = previousQuestion;
+window.nextQuestion = nextQuestion;
