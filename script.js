@@ -30,6 +30,7 @@ function getViews() {
     };
 }
 
+// Global View Switcher Controller
 function showView(viewName) {
     const views = getViews();
     Object.values(views).forEach(v => {
@@ -40,6 +41,7 @@ function showView(viewName) {
     }
 }
 
+// Audio System Configuration
 function playSound(type) {
     if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -81,6 +83,7 @@ function preloadImages(questionsArray) {
     });
 }
 
+// System Boot Routine
 function init() {
     document.getElementById('loading-screen').classList.remove('hidden');
     Papa.parse(GOOGLE_SHEET_URL, {
@@ -240,6 +243,7 @@ function quitPractice() {
     showQuestionTypes(currentTopic, currentPendingQuestions);
 }
 
+// Question Screen Loader Routine
 function loadQuestion() {
     const prevBtn = document.getElementById('prev-btn');
     if (prevBtn) {
@@ -254,10 +258,10 @@ function loadQuestion() {
     }    
     const q = currentTopicQuestions[currentQuestionIndex];
     
-    // --- RESET VIEW STATE FOR SWAP METHOD ---
+    // --- RESET INTERACTION VIEW STATE FOR SWAP METHOD ---
     document.getElementById('feedback-container').classList.add('hidden');
     document.getElementById('next-btn').classList.add('hidden');
-    document.getElementById('mascot-container').classList.remove('hidden');
+    document.getElementById('mascot-container').classList.remove('hidden'); // Mascot is pulled back into the view flow
 
     document.getElementById('progress-text').innerText = `Question ${currentQuestionIndex + 1} of ${currentTopicQuestions.length}`;
     document.getElementById('question-text').innerText = q.Question_Text;
@@ -307,6 +311,7 @@ function loadQuestion() {
     }
 }
 
+// Answer Evaluation Engine
 function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType) {
     const sel = String(selectedText).trim().toLowerCase();
     const cor = String(correctText).trim().toLowerCase();
@@ -322,8 +327,8 @@ function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType)
         });
     }
 
-    // --- SWAP RUNTIME: HIDE MASCOT AND SHOW FEEDBACK PANEL ---
-    document.getElementById('mascot-container').classList.add('hidden');
+    // --- EXECUTE THE SWAP ---
+    document.getElementById('mascot-container').classList.add('hidden'); // Mascot vanishes completely
     
     const fb = document.getElementById('feedback-container');
     fb.classList.remove('hidden', 'bg-green-100', 'bg-red-100');
@@ -341,7 +346,7 @@ function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType)
     }
     
     document.getElementById('explanation-text').innerText = explanation ? `Explanation: ${explanation}` : '';
-    fb.classList.remove('hidden');
+    fb.classList.remove('hidden'); // Feedback card takes over the freed display slot
     document.getElementById('next-btn').classList.remove('hidden');
 }
 
