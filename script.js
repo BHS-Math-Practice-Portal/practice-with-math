@@ -14,6 +14,25 @@ let timerInterval;
 let secondsElapsed = 0;
 let audioCtx;
 
+// Global explicit binding to window for perfect button navigation responsiveness
+window.previousQuestion = function() {
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        loadQuestion();
+    } else {
+        alert("You are already on the first question!");
+    }
+};
+
+window.nextQuestion = function() {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < currentTopicQuestions.length) {
+        loadQuestion();
+    } else {
+        showFinalScore();
+    }
+};
+
 // Helper to get column data regardless of exact header casing/naming
 function getChapterName(q) {
     return q.Chapter_Number_Name || q.Topic || q.topic || "";
@@ -228,25 +247,10 @@ function quitPractice() {
     showQuestionTypes(currentTopic, currentPendingQuestions);
 }
 
-// ↩️ NAVIGATION FUNCTIONS
-function previousQuestion() {
-    if (currentQuestionIndex > 0) {
-        currentQuestionIndex--;
-        loadQuestion();
-    } else {
-        alert("You are already on the first question!");
-    }
-}
-
-function nextQuestion() {
-    currentQuestionIndex++;
-    if (currentQuestionIndex < currentTopicQuestions.length) loadQuestion();
-    else showFinalScore();
-}
-
 // Question Screen Loader Routine
 function loadQuestion() {
     const q = currentTopicQuestions[currentQuestionIndex];
+    if (!q) return;
     
     // Reset layout view state cleanly
     document.getElementById('feedback-container').classList.add('hidden');
@@ -268,8 +272,8 @@ function loadQuestion() {
     const qTypeRaw = q.Question_Type || q.question_type || q['Question Type'] || 'MCQ';
     const qType = String(qTypeRaw).toUpperCase().trim();
     
-    // Custom Option Button Styling for Single-Column Flow within Grid
     if (qType === 'MCQ') {
+        optionsContainer.className = "grid grid-cols-1 sm:grid-cols-2 gap-4 w-full";
         [q.Option_A, q.Option_B, q.Option_C, q.Option_D].forEach(opt => {
             if (!opt) return; 
             const btn = document.createElement('button');
@@ -279,6 +283,7 @@ function loadQuestion() {
             optionsContainer.appendChild(btn);
         });
     } else if (qType === 'TF' || qType === 'T/F') {
+        optionsContainer.className = "grid grid-cols-1 sm:grid-cols-2 gap-4 w-full";
         ['True', 'False'].forEach(opt => {
             const btn = document.createElement('button');
             btn.className = 'option-btn text-center bg-slate-50 border-4 border-slate-200 hover:border-blue-500 hover:bg-blue-50 text-2xl font-bold py-5 px-6 rounded-xl w-full transition-all';
@@ -287,9 +292,12 @@ function loadQuestion() {
             optionsContainer.appendChild(btn);
         });
     } else if (qType === 'FIB') {
+        optionsContainer.className = "grid grid-cols-1 gap-4 w-full";
         optionsContainer.innerHTML = `
-            <input type="text" id="fib-input" placeholder="Type answer here..." class="w-full text-2xl font-bold py-5 px-6 rounded-xl border-4 border-slate-300 focus:border-blue-500 mb-2 text-center">
-            <button id="fib-submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl text-xl transition-colors">Submit Answer</button>
+            <div>
+                <input type="text" id="fib-input" placeholder="Type answer here..." class="w-full text-2xl font-bold py-5 px-6 rounded-xl border-4 border-slate-300 focus:border-blue-500 mb-2 text-center">
+                <button id="fib-submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl text-xl transition-colors">Submit Answer</button>
+            </div>
         `;
         const input = document.getElementById('fib-input');
         const sub = document.getElementById('fib-submit');
@@ -360,7 +368,3 @@ function handleBackNavigation() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
-
-// Expose navigation properties explicitly to global browser stack
-window.previousQuestion = previousQuestion;
-window.nextQuestion = nextQuestion;
