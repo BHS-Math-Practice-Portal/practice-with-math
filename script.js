@@ -231,12 +231,10 @@ function startPractice(questions) {
     // Set up action buttons
 const skipBtn = document.getElementById('skip-btn');
 if (skipBtn) skipBtn.onclick = nextQuestion;
-
-const nextBtn = document.getElementById('next-btn');
-if (nextBtn) nextBtn.onclick = nextQuestion;
-    
+   
 const prevBtn = document.getElementById('prev-btn');
 if (prevBtn) {
+    prevBtn.removeAttribute('onclick');
     prevBtn.onclick = function() {
         if (currentQuestionIndex > 0) {
             currentQuestionIndex--;
@@ -250,7 +248,6 @@ function quitPractice() {
     clearInterval(timerInterval);
     showQuestionTypes(currentTopic, currentPendingQuestions);
 }
-
 function loadQuestion() {
     const prevBtn = document.getElementById('prev-btn');
     if (prevBtn) {
@@ -268,8 +265,6 @@ function loadQuestion() {
     // --- RESET VIEW STATE FOR IN-PLACE SWAP ---
     document.getElementById('feedback-container').classList.add('hidden');
     document.getElementById('next-btn').classList.add('hidden');
-    document.getElementById('mascot-container').classList.remove('hidden'); // Show Mascot
-    
     document.getElementById('progress-text').innerText = `Question ${currentQuestionIndex + 1} of ${currentTopicQuestions.length}`;
     document.getElementById('question-text').innerText = q.Question_Text;
 
@@ -335,10 +330,7 @@ function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType)
         });
     }
 
-    // --- SWAP RUNTIME: HIDE MASCOT IMAGE INSTANTLY ---
-    document.getElementById('mascot-container').classList.add('hidden');
-
-    const fb = document.getElementById('feedback-container');
+     const fb = document.getElementById('feedback-container');
     fb.classList.remove('hidden', 'bg-green-100', 'bg-red-100');
     
     if (isCorrect) {
@@ -353,11 +345,7 @@ function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType)
         document.getElementById('feedback-message').innerText = qType === 'FIB' ? `❌ Incorrect. Answer: ${correctText}` : '❌ Incorrect';
     }
     
-    // Write out the content directly to your explanation node inside the swap zone
     document.getElementById('explanation-text').innerText = explanation ? `Explanation: ${explanation}` : '';
-    
-    // Unhide the card elements in place
-    fb.classList.remove('hidden');
     document.getElementById('next-btn').classList.remove('hidden');
 }
 
@@ -403,8 +391,3 @@ window.previousQuestion = function() {
         alert("You are already on the first question!");
     }
 };
-// Expose functions globally for any remaining inline HTML listeners
-window.nextQuestion = nextQuestion;
-window.quitPractice = quitPractice;
-window.showTopics = showTopics;
-window.showGrades = showGrades;
