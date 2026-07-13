@@ -227,23 +227,25 @@ function startPractice(questions) {
     updateScoreDisplay();
     loadQuestion();
     showView('practice');
-    const skipBtn = document.getElementById('skip-btn');
-    if (skipBtn) skipBtn.onclick = nextQuestion;
     
-    const prevBtn = document.getElementById('prev-btn');
-    if (prevBtn) {
-        prevBtn.removeAttribute('onclick'); 
-        prevBtn.onclick = function() {
-            if (currentQuestionIndex > 0) {
-                currentQuestionIndex--;
-                loadQuestion();
-            } else {
-                alert("You are already on the first question!");
-            }
-        };
-    }
-}
+    // Set up action buttons
+const skipBtn = document.getElementById('skip-btn');
+if (skipBtn) skipBtn.onclick = nextQuestion;
 
+const nextBtn = document.getElementById('next-btn');
+if (nextBtn) nextBtn.onclick = nextQuestion;
+    
+const prevBtn = document.getElementById('prev-btn');
+if (prevBtn) {
+    prevBtn.onclick = function() {
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            loadQuestion();
+        } else {
+            alert("You are already on the first question!");
+        }
+    };
+}
 function quitPractice() {
     clearInterval(timerInterval);
     showQuestionTypes(currentTopic, currentPendingQuestions);
@@ -401,3 +403,8 @@ window.previousQuestion = function() {
         alert("You are already on the first question!");
     }
 };
+// Expose functions globally for any remaining inline HTML listeners
+window.nextQuestion = nextQuestion;
+window.quitPractice = quitPractice;
+window.showTopics = showTopics;
+window.showGrades = showGrades;
