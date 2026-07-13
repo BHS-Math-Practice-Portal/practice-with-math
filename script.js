@@ -250,16 +250,6 @@ function quitPractice() {
 }
 function loadQuestion() {
     const prevBtn = document.getElementById('prev-btn');
-    if (prevBtn) {
-        prevBtn.onclick = function() {
-            if (currentQuestionIndex > 0) {
-                currentQuestionIndex--;
-                loadQuestion();
-            } else {
-                alert("You are already on the first question!");
-            }
-        };
-    }    
     const q = currentTopicQuestions[currentQuestionIndex];
     
     // --- RESET VIEW STATE FOR IN-PLACE SWAP ---
@@ -346,9 +336,18 @@ function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType)
     }
     
     document.getElementById('explanation-text').innerText = explanation ? `Explanation: ${explanation}` : '';
+    fb.classList.remove('hidden');
     document.getElementById('next-btn').classList.remove('hidden');
 }
-
+function previousQuestion() {
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        loadQuestion();
+    } else {
+        alert("You are already on the first question!");
+    }
+}
+    
 function nextQuestion() {
     currentQuestionIndex++;
     if (currentQuestionIndex < currentTopicQuestions.length) loadQuestion();
@@ -391,3 +390,9 @@ window.previousQuestion = function() {
         alert("You are already on the first question!");
     }
 };
+// Expose functions globally so the HTML buttons can run them cleanly
+window.nextQuestion = nextQuestion;
+window.previousQuestion = previousQuestion;
+window.quitPractice = quitPractice;
+window.showTopics = showTopics;
+window.showGrades = showGrades;
