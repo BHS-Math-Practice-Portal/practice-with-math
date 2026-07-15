@@ -216,6 +216,9 @@ function updateTimerDisplay() {
     document.getElementById('timer-display').innerText = `⏱️ ${formatTime(secondsElapsed)}`;
 }
 
+// ============================================================
+// 🎯 PRACTICE INITIATION (NOW PROPERLY SCOPED & CLOSED)
+// ============================================================
 function startPractice(questions) {
     currentTopicQuestions = questions;
     currentQuestionIndex = 0;
@@ -227,22 +230,14 @@ function startPractice(questions) {
     updateScoreDisplay();
     loadQuestion();
     showView('practice');
-}
-    // Set up action buttons
-const skipBtn = document.getElementById('skip-btn');
-if (skipBtn) skipBtn.onclick = nextQuestion;
-   
-const prevBtn = document.getElementById('prev-btn');
-if (prevBtn) {
-   prevBtn.onclick = previousQuestion; // Direct reference to our clean function
-}
-    
-    function quitPractice() {
+} // 👈 Properly closed here! No more scope traps.
+
+function quitPractice() {
     clearInterval(timerInterval);
     showQuestionTypes(currentTopic, currentPendingQuestions);
 }
+
 function loadQuestion() {
-    const prevBtn = document.getElementById('prev-btn');
     const q = currentTopicQuestions[currentQuestionIndex];
     
     // --- RESET VIEW STATE FOR IN-PLACE SWAP ---
@@ -313,7 +308,7 @@ function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType)
         });
     }
 
-     const fb = document.getElementById('feedback-container');
+    const fb = document.getElementById('feedback-container');
     fb.classList.remove('hidden', 'bg-green-100', 'bg-red-100');
     
     if (isCorrect) {
@@ -332,6 +327,7 @@ function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType)
     fb.classList.remove('hidden');
     document.getElementById('next-btn').classList.remove('hidden');
 }
+
 function previousQuestion() {
     if (currentQuestionIndex > 0) {
         currentQuestionIndex--;
@@ -357,8 +353,21 @@ function showFinalScore() {
     document.getElementById('total-questions').innerText = currentTopicQuestions.length;
     document.getElementById('final-time').innerText = formatTime(secondsElapsed);
     showView('score');
-    if (score === currentTopicQuestions.length && score > 0) {
-        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+    
+    // --- 🎆 NICE GRAFFITI (CONFETTI) ADJUSTMENT 🎆 ---
+    // Instead of requiring 100% perfection to see confetti, we now show celebration confetti for ANY points scored!
+    // If they score a perfect 100%, we fire a beautiful double-burst confetti!
+    if (score > 0) {
+        if (score === currentTopicQuestions.length) {
+            // Perfect Score Double Burst!
+            confetti({ particleCount: 180, spread: 80, origin: { y: 0.6 } });
+            setTimeout(() => {
+                confetti({ particleCount: 100, spread: 60, origin: { y: 0.6 } });
+            }, 250);
+        } else {
+            // Regular Completion Celebration!
+            confetti({ particleCount: 85, spread: 65, origin: { y: 0.6 } });
+        }
     }
 }
 
@@ -370,10 +379,13 @@ function handleBackNavigation() {
     else if (!v.score.classList.contains('hidden')) showTopics(currentGrade);
     else window.location.href = 'index.html';
 }
+
 document.addEventListener('DOMContentLoaded', init);
+
 // Expose functions globally so the HTML buttons can run them cleanly
 window.nextQuestion = nextQuestion;
-window.previousQuestion = previousQuestion; // Points directly to the clean function above!
+window.previousQuestion = previousQuestion;
 window.quitPractice = quitPractice;
 window.showTopics = showTopics;
 window.showGrades = showGrades;
+window.startPracticeFilter = startPracticeFilter;
