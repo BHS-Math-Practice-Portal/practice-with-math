@@ -227,24 +227,17 @@ function startPractice(questions) {
     updateScoreDisplay();
     loadQuestion();
     showView('practice');
-    
+}
     // Set up action buttons
 const skipBtn = document.getElementById('skip-btn');
 if (skipBtn) skipBtn.onclick = nextQuestion;
    
 const prevBtn = document.getElementById('prev-btn');
 if (prevBtn) {
-    prevBtn.removeAttribute('onclick');
-    prevBtn.onclick = function() {
-        if (currentQuestionIndex > 0) {
-            currentQuestionIndex--;
-            loadQuestion();
-        } else {
-            alert("You are already on the first question!");
-        }
-    };
+   prevBtn.onclick = previousQuestion; // Direct reference to our clean function
 }
-function quitPractice() {
+    
+    function quitPractice() {
     clearInterval(timerInterval);
     showQuestionTypes(currentTopic, currentPendingQuestions);
 }
@@ -377,22 +370,10 @@ function handleBackNavigation() {
     else if (!v.score.classList.contains('hidden')) showTopics(currentGrade);
     else window.location.href = 'index.html';
 }
-
 document.addEventListener('DOMContentLoaded', init);
-
-window.previousQuestion = function() {
-    if (typeof currentQuestionIndex !== 'undefined' && currentQuestionIndex > 0) {
-        currentQuestionIndex--;
-        if (typeof loadQuestion === 'function') {
-            loadQuestion();
-        }
-    } else {
-        alert("You are already on the first question!");
-    }
-};
 // Expose functions globally so the HTML buttons can run them cleanly
 window.nextQuestion = nextQuestion;
-window.previousQuestion = previousQuestion;
+window.previousQuestion = previousQuestion; // Points directly to the clean function above!
 window.quitPractice = quitPractice;
 window.showTopics = showTopics;
 window.showGrades = showGrades;
