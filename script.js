@@ -351,22 +351,70 @@ function showFinalScore() {
     document.getElementById('final-time').innerText = formatTime(secondsElapsed);
     showView('score');
     
-    // --- 🎆 NICE GRAFFITI (CONFETTI) ADJUSTMENT 🎆 ---
-    // Instead of requiring 100% perfection to see confetti, we now show celebration confetti for ANY points scored!
-    // If they score a perfect 100%, we fire a beautiful double-burst confetti!
-    if (score > 0) {
-        if (score === currentTopicQuestions.length) {
-            // Perfect Score Double Burst!
+    const badge = document.getElementById('celebration-badge');
+    
+    // Clear any previous color styling classes from the badge so they don't pile up
+    if (badge) {
+        badge.className = "text-3xl font-black mb-6 px-6 py-3 rounded-2xl inline-block border-4 hidden";
+    }
+
+    const total = currentTopicQuestions.length;
+    if (total > 0) {
+        const percentage = (score / total) * 100;
+        
+        if (score === 0) {
+            // 🎯 0% Score
+            if (badge) {
+                badge.innerText = "🎯 Give it another shot! 🎯";
+                badge.classList.add('bg-slate-100', 'text-slate-600', 'border-slate-300');
+                badge.classList.remove('hidden');
+            }
+        } else if (percentage === 100) {
+            // 🏆 100% Score: Grand Master
+            if (badge) {
+                badge.innerText = "🏆 Grand Master 🏆";
+                badge.classList.add('bg-yellow-100', 'text-yellow-700', 'border-yellow-400');
+                badge.classList.remove('hidden');
+            }
+            // Spectacular Double Blast!
             confetti({ particleCount: 180, spread: 80, origin: { y: 0.6 } });
             setTimeout(() => {
                 confetti({ particleCount: 100, spread: 60, origin: { y: 0.6 } });
             }, 250);
+            
+        } else if (percentage >= 80) {
+            // 🎉 80% to 99%: High Achiever
+            if (badge) {
+                badge.innerText = "🎉 High Achiever 🎉";
+                badge.classList.add('bg-green-100', 'text-green-700', 'border-green-400');
+                badge.classList.remove('hidden');
+            }
+            // Big Single Blast!
+            confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
+            
+        } else if (percentage >= 50) {
+            // 👍 50% to 79%: Solid Effort
+            if (badge) {
+                badge.innerText = "👍 Solid Effort 👍";
+                badge.classList.add('bg-blue-100', 'text-blue-700', 'border-blue-400');
+                badge.classList.remove('hidden');
+            }
+            // Gentle Medium Splash
+            confetti({ particleCount: 60, spread: 50, origin: { y: 0.6 } });
+            
         } else {
-            // Regular Completion Celebration!
-            confetti({ particleCount: 85, spread: 65, origin: { y: 0.6 } });
+            // 💪 1% to 49%: Keep It Up
+            if (badge) {
+                badge.innerText = "💪 Keep It Up! 💪";
+                badge.classList.add('bg-orange-100', 'text-orange-700', 'border-orange-400');
+                badge.classList.remove('hidden');
+            }
+            // Tiny Encourage Sprinkle
+            confetti({ particleCount: 25, spread: 35, origin: { y: 0.6 } });
         }
     }
 }
+
 function handleBackNavigation() {
     const v = getViews();
     if (!v.practice.classList.contains('hidden')) quitPractice();
