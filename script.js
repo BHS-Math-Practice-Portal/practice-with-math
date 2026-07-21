@@ -2,7 +2,6 @@
 // 🛑 YOUR GOOGLE SHEET CSV LINK
 // ==========================================
 const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQi3wglj0KY9gukaN6oVdot2tKiUEWcfxXi_0ZSO3QUttnUz2UriGxceXnHk9Sm25I7L-7MwbPzK9Rt/pub?gid=0&single=true&output=csv";
-
 let allQuestions = [];
 let currentPendingQuestions = [];
 let currentTopicQuestions = [];
@@ -18,7 +17,7 @@ let userAnswers = {}; // Tracks answers per question index
 // ==========================================
 // 📡 DEDICATED STUDENT SCORES WEB APP URL
 // ==========================================
-const SCORES_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxcAt2ek6os8sJF4OkUQhCIAzICgXUtr5ZIb2IznKP8Y7OSZUUWVRHIhycJ0CBCX2b8yQ/exec"; 
+const SCORES_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwJDMf8gsj6p_krmPhhnGiMJuse-K3hVp4nnq3BsdMItIGlY9SIN_ICvZmJngllfh_XbQ/exec"; 
 
 let currentStudentName = "Guest Student";
 
@@ -64,7 +63,7 @@ function updateNameHUD() {
 
 // --- SEND SCORES TO TAB 2 (Student_Scores) ---
 function sendScoreToDatabase() {
-    if (!SCORES_WEB_APP_URL || SCORES_WEB_APP_URL === "YOUR_APPS_SCRIPT_WEB_APP_URL_HERE") {
+    if (!SCORES_WEB_APP_URL || SCORES_WEB_APP_URL === "https://script.google.com/macros/s/AKfycbwJDMf8gsj6p_krmPhhnGiMJuse-K3hVp4nnq3BsdMItIGlY9SIN_ICvZmJngllfh_XbQ/exec") {
         console.warn("Scores Web App URL not set.");
         return;
     }
@@ -90,6 +89,10 @@ function sendScoreToDatabase() {
         console.error("Score logging failed:", err);
     });
 }
+
+
+
+
 
 // --- GAMIFICATION STATE ---
 let currentStreak = 0;
@@ -167,9 +170,8 @@ function preloadImages(questionsArray) {
     });
 }
 
-function init() {
-   function init() {
-    checkStudentName(); // Checks or prompts for student name
+  function init() {
+ checkStudentName(); // Checks or prompts for student name
     // ... rest of your init code
 } 
     const loadingScreen = document.getElementById('loading-screen');
@@ -537,17 +539,16 @@ function triggerConfetti(options) {
 }
 
 function showFinalScore() {
-   function showFinalScore() {
     if (timerInterval) clearInterval(timerInterval);
 
-    // 📡 AUTOMATICALLY LOG STUDENT RESULT TO TAB 2
+    // 📡 SILENTLY LOG STUDENT RESULTS TO YOUR DEDICATED SHEET
     sendScoreToDatabase();
 
-    // ... rest of your showFinalScore code
-}
+    // Rest of your showFinalScore code...
     const finalScore = document.getElementById('final-score');
     if (finalScore) finalScore.innerText = score;
-
+    // ...
+  
     const totalQuestions = document.getElementById('total-questions');
     if (totalQuestions) totalQuestions.innerText = currentTopicQuestions.length;
 
