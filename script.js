@@ -2,7 +2,6 @@
 // 🛑 YOUR GOOGLE SHEET CSV LINK
 // ==========================================
 const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQi3wglj0KY9gukaN6oVdot2tKiUEWcfxXi_0ZSO3QUttnUz2UriGxceXnHk9Sm25I7L-7MwbPzK9Rt/pub?output=csv"; 
-
 let allQuestions = [];
 let currentPendingQuestions = [];
 let currentTopicQuestions = [];
@@ -10,7 +9,6 @@ let currentQuestionIndex = 0;
 let score = 0;
 let currentGrade = ''; 
 let currentTopic = '';
-
 let timerInterval;
 let secondsElapsed = 0;
 let audioCtx;
@@ -19,7 +17,6 @@ let audioCtx;
 function getChapterName(q) {
     return q.Chapter_Number_Name || q.Topic || q.topic || "";
 }
-
 function getViews() {
     return {
         loading: document.getElementById('loading-screen'),
@@ -30,7 +27,6 @@ function getViews() {
         score: document.getElementById('score-view')
     };
 }
-
 function showView(viewName) {
     const views = getViews();
     Object.values(views).forEach(v => {
@@ -40,7 +36,6 @@ function showView(viewName) {
         views[viewName].classList.remove('hidden');
     }
 }
-
 function playSound(type) {
     if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -50,8 +45,7 @@ function playSound(type) {
     const gainNode = audioCtx.createGain();
     oscillator.connect(gainNode);
     gainNode.connect(audioCtx.destination);
-    
-    if (type === 'correct') {
+        if (type === 'correct') {
         oscillator.type = 'sine';
         oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime); 
         oscillator.frequency.exponentialRampToValueAtTime(1046.50, audioCtx.currentTime + 0.1); 
@@ -69,7 +63,6 @@ function playSound(type) {
         oscillator.stop(audioCtx.currentTime + 0.3);
     }
 }
-
 function preloadImages(questionsArray) {
     questionsArray.forEach(q => {
         if (q.Image_URL && q.Image_URL.trim() !== '') {
@@ -81,7 +74,6 @@ function preloadImages(questionsArray) {
         }
     });
 }
-
 function init() {
     document.getElementById('loading-screen').classList.remove('hidden');
     Papa.parse(GOOGLE_SHEET_URL, {
@@ -103,16 +95,15 @@ function init() {
         }
     });
 }
-
 function showGrades() {
     document.getElementById('nav-back-grades').classList.add('hidden');
     document.getElementById('nav-back-topics').classList.add('hidden');
-    
-    const grades = [...new Set(allQuestions.map(q => q.Grade))]
-        .filter(Boolean)
-        .sort((a, b) => a - b);    
-        
-    const container = document.getElementById('grade-buttons');
+// Filter out non-numeric values so "Mental Math" doesn't create a normal Grade button
+const grades = [...new Set(allQuestions.map(q => q.Grade || q.grade))]
+    .filter(g => g !== null && g !== undefined && !isNaN(Number(g)) && String(g).trim() !== '')
+    .map(g => Number(g))
+    .sort((a, b) => a - b);
+          const container = document.getElementById('grade-buttons');
     container.innerHTML = '';
     grades.forEach(grade => {
         const btn = document.createElement('button');
@@ -123,23 +114,18 @@ function showGrades() {
     });
     showView('grade');
 }
-
 function showTopics(selectedGrade) {
     document.getElementById('nav-back-grades').classList.remove('hidden');
     document.getElementById('nav-back-topics').classList.add('hidden');
     currentGrade = selectedGrade; 
     document.getElementById('selected-grade-title').innerText = `Grade ${selectedGrade} - Select Chapter`;
-    
-    const gradeQuestions = allQuestions.filter(q => q.Grade == selectedGrade);
-    
-    const topics = [...new Set(gradeQuestions.map(q => getChapterName(q)))].filter(Boolean).sort((a, b) => {
+        const gradeQuestions = allQuestions.filter(q => q.Grade == selectedGrade);
+        const topics = [...new Set(gradeQuestions.map(q => getChapterName(q)))].filter(Boolean).sort((a, b) => {
         return a.localeCompare(b, undefined, {numeric: true, sensitivity: 'base'});
     });   
-    
-    const container = document.getElementById('topic-buttons');
+        const container = document.getElementById('topic-buttons');
     container.innerHTML = '';
     container.className = "grid grid-cols-1 md:grid-cols-2 gap-4 w-full";
-
     topics.forEach(topic => {
         const btn = document.createElement('button');
         btn.className = 'flex items-center text-left bg-white border-l-8 border-blue-600 border-t border-r border-b border-slate-200 hover:border-blue-500 hover:bg-blue-50 p-5 rounded-r-xl shadow-sm transition-all hover:scale-[1.02]';
@@ -154,7 +140,6 @@ function showTopics(selectedGrade) {
     });
     showView('topic');
 }
-
 function showQuestionTypes(topic, questionsForTopic) {
     document.getElementById('nav-back-grades').classList.add('hidden');
     document.getElementById('nav-back-topics').classList.remove('hidden');
@@ -170,9 +155,7 @@ function showQuestionTypes(topic, questionsForTopic) {
                             .replace(/\s+/g, '-')
                             .replace(/-+/g, '-')
                             .trim();
-    
-    const safeFileName = `G${currentGrade}-${cleanTopic}`;
-
+        const safeFileName = `G${currentGrade}-${cleanTopic}`;
     const worksheetDiv = document.createElement('div');
     worksheetDiv.id = 'worksheet-box';
     worksheetDiv.className = "mt-8 p-4 bg-yellow-50 border-2 border-dashed border-yellow-400 rounded-xl flex items-center justify-between";
@@ -188,7 +171,6 @@ function showQuestionTypes(topic, questionsForTopic) {
     typeView.appendChild(worksheetDiv);
     showView('type');
 }
-
 function startPracticeFilter(selectedType) {
     let filteredQuestions = currentPendingQuestions;
     if (selectedType !== 'ALL') {
@@ -204,18 +186,33 @@ function startPracticeFilter(selectedType) {
     }
     startPractice(filteredQuestions);
 }
-
 function formatTime(totalSeconds) {
     const m = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
     const s = (totalSeconds % 60).toString().padStart(2, '0');
     return `${m}:${s}`;
 }
-
 function updateTimerDisplay() {
     secondsElapsed++;
     document.getElementById('timer-display').innerText = `⏱️ ${formatTime(secondsElapsed)}`;
 }
+function startMentalMath() {
+    // Look for rows where Grade is tagged as 'Mental Math'
+    const mmQuestions = allQuestions.filter(q => {
+        const g = q.Grade || q.grade;
+        return g && String(g).trim().toLowerCase() === 'mental math';
+    });
 
+    if (mmQuestions.length === 0) {
+        alert("No Mental Math questions found! Ensure 'Mental Math' is typed in the Grade column of your sheet.");
+        return;
+    }
+
+    currentTopic = "Mental Math Arena";
+    currentPendingQuestions = mmQuestions;
+
+    // Direct bypass straight to practice using your existing loader
+    startPractice(mmQuestions);
+}
 // ============================================================
 // 🎯 PRACTICE INITIATION (NOW PROPERLY SCOPED & CLOSED)
 // ============================================================
@@ -231,12 +228,10 @@ function startPractice(questions) {
     loadQuestion();
     showView('practice');
 } // 👈 Properly closed here! No more scope traps.
-
 function quitPractice() {
     clearInterval(timerInterval);
     showQuestionTypes(currentTopic, currentPendingQuestions);
 }
-
 function loadQuestion() {
     const q = currentTopicQuestions[currentQuestionIndex];
     
@@ -253,7 +248,6 @@ function loadQuestion() {
     } else {
         imgElement.classList.add('hidden'); 
     }
-
     const optionsContainer = document.getElementById('options-container');
     optionsContainer.innerHTML = '';
     const qTypeRaw = q.Question_Type || q.question_type || q['Question Type'] || 'MCQ';
@@ -261,8 +255,7 @@ function loadQuestion() {
 
     if (qType === 'MCQ') {
         optionsContainer.className = "grid grid-cols-1 sm:grid-cols-2 gap-4 w-full";
-        
-        [q.Option_A, q.Option_B, q.Option_C, q.Option_D].forEach(opt => {
+                [q.Option_A, q.Option_B, q.Option_C, q.Option_D].forEach(opt => {
             if (!opt) return; 
             const btn = document.createElement('button');
             btn.className = 'option-btn text-left bg-slate-50 border-4 border-slate-200 hover:border-blue-500 hover:bg-blue-50 text-2xl font-bold py-5 px-6 rounded-xl w-full';
@@ -292,7 +285,17 @@ function loadQuestion() {
         setTimeout(() => input.focus(), 100);
     }
 }
-
+function quitPractice() {
+    if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
+    
+    if (currentTopic === "Mental Math Arena") {
+        showGrades(); // Send straight back to home dashboard
+    } else if (typeof currentGrade !== 'undefined' && currentGrade) {
+        showTopics(currentGrade);
+    } else {
+        showGrades();
+    }
+}
 function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType) {
     const sel = String(selectedText).trim().toLowerCase();
     const cor = String(correctText).trim().toLowerCase();
@@ -307,7 +310,6 @@ function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType)
             }
         });
     }
-
     const fb = document.getElementById('feedback-container');
     fb.classList.remove('hidden', 'bg-green-100', 'bg-red-100');
     
@@ -322,12 +324,10 @@ function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType)
         fb.classList.add('bg-red-100');
         document.getElementById('feedback-message').innerText = qType === 'FIB' ? `❌ Incorrect. Answer: ${correctText}` : '❌ Incorrect';
     }
-    
-    document.getElementById('explanation-text').innerText = explanation ? `Explanation: ${explanation}` : '';
+        document.getElementById('explanation-text').innerText = explanation ? `Explanation: ${explanation}` : '';
     fb.classList.remove('hidden');
     document.getElementById('next-btn').classList.remove('hidden');
 }
-
 function previousQuestion() {
     if (currentQuestionIndex > 0) {
         currentQuestionIndex--;
@@ -336,17 +336,14 @@ function previousQuestion() {
         alert("You are already on the first question!");
     }
 }
-    
-function nextQuestion() {
+    function nextQuestion() {
     currentQuestionIndex++;
     if (currentQuestionIndex < currentTopicQuestions.length) loadQuestion();
     else showFinalScore();
 }
-
 function updateScoreDisplay() {
     document.getElementById('current-score').innerText = `Score: ${score}`;
 }
-
 function showFinalScore() {
     clearInterval(timerInterval);
     document.getElementById('final-score').innerText = score;
@@ -370,7 +367,6 @@ function showFinalScore() {
         }
     }
 }
-
 function handleBackNavigation() {
     const v = getViews();
     if (!v.practice.classList.contains('hidden')) quitPractice();
@@ -379,7 +375,6 @@ function handleBackNavigation() {
     else if (!v.score.classList.contains('hidden')) showTopics(currentGrade);
     else window.location.href = 'index.html';
 }
-
 document.addEventListener('DOMContentLoaded', init);
 
 // Expose functions globally so the HTML buttons can run them cleanly
@@ -389,3 +384,4 @@ window.quitPractice = quitPractice;
 window.showTopics = showTopics;
 window.showGrades = showGrades;
 window.startPracticeFilter = startPracticeFilter;
+window.startMentalMath = startMentalMath;
