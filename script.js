@@ -1,7 +1,7 @@
 // ==========================================
 // 🛑 YOUR GOOGLE SHEET CSV LINK
 // ==========================================
-const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQi3wglj0KY9gukaN6oVdot2tKiUEWcfxXi_0ZSO3QUttnUz2UriGxceXnHk9Sm25I7L-7MwbPzK9Rt/pub?output=csv"; 
+const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQi3wglj0KY9gukaN6oVdot2tKiUEWcfxXi_0ZSO3QUttnUz2UriGxceXnHk9Sm25I7L-7MwbPzK9Rt/pub?gid=0&single=true&output=csv";
 
 let allQuestions = [];
 let currentPendingQuestions = [];
@@ -14,6 +14,82 @@ let timerInterval;
 let secondsElapsed = 0;
 let audioCtx;
 let userAnswers = {}; // Tracks answers per question index
+
+// ==========================================
+// 📡 DEDICATED STUDENT SCORES WEB APP URL
+// ==========================================
+const SCORES_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxcAt2ek6os8sJF4OkUQhCIAzICgXUtr5ZIb2IznKP8Y7OSZUUWVRHIhycJ0CBCX2b8yQ/exec"; 
+
+let currentStudentName = "Guest Student";
+
+// --- STUDENT NAME MODAL CONTROLS ---
+function checkStudentName() {
+    const savedName = localStorage.getItem("math_portal_student_name");
+    if (savedName && savedName.trim() !== '') {
+        currentStudentName = savedName.trim();
+        updateNameHUD();
+    } else {
+        openNameModal();
+    }
+}
+
+function openNameModal() {
+    const modal = document.getElementById('name-modal');
+    const input = document.getElementById('student-name-input');
+    if (modal) {
+        if (input) input.value = currentStudentName !== "Guest Student" ? currentStudentName : "";
+        modal.classList.remove('hidden');
+        setTimeout(() => input && input.focus(), 150);
+    }
+}
+
+function saveStudentName() {
+    const input = document.getElementById('student-name-input');
+    if (input && input.value.trim() !== '') {
+        currentStudentName = input.value.trim();
+        localStorage.setItem("math_portal_student_name", currentStudentName);
+        updateNameHUD();
+        
+        const modal = document.getElementById('name-modal');
+        if (modal) modal.classList.add('hidden');
+    }
+}
+
+function updateNameHUD() {
+    const nameDisplay = document.getElementById('hud-student-name');
+    if (nameDisplay) {
+        nameDisplay.innerText = currentStudentName;
+    }
+}
+
+// --- SEND SCORES TO TAB 2 (Student_Scores) ---
+function sendScoreToDatabase() {
+    if (!SCORES_WEB_APP_URL || SCORES_WEB_APP_URL === "YOUR_APPS_SCRIPT_WEB_APP_URL_HERE") {
+        console.warn("Scores Web App URL not set.");
+        return;
+    }
+
+    const payload = {
+        studentName: currentStudentName,
+        grade: currentGrade || "Mental Math",
+        topic: currentTopic || "General",
+        score: score,
+        totalQuestions: currentTopicQuestions.length,
+        xpEarned: totalXP,
+        timeTaken: formatTime(secondsElapsed)
+    };
+
+    fetch(SCORES_WEB_APP_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    }).then(() => {
+        console.log("Score logged successfully to Tab 2!");
+    }).catch(err => {
+        console.error("Score logging failed:", err);
+    });
+}
 
 // --- GAMIFICATION STATE ---
 let currentStreak = 0;
@@ -92,6 +168,10 @@ function preloadImages(questionsArray) {
 }
 
 function init() {
+   function init() {
+    checkStudentName(); // Checks or prompts for student name
+    // ... rest of your init code
+} 
     const loadingScreen = document.getElementById('loading-screen');
     if (loadingScreen) loadingScreen.classList.remove('hidden');
 
@@ -457,8 +537,14 @@ function triggerConfetti(options) {
 }
 
 function showFinalScore() {
+   function showFinalScore() {
     if (timerInterval) clearInterval(timerInterval);
 
+    // 📡 AUTOMATICALLY LOG STUDENT RESULT TO TAB 2
+    sendScoreToDatabase();
+
+    // ... rest of your showFinalScore code
+}
     const finalScore = document.getElementById('final-score');
     if (finalScore) finalScore.innerText = score;
 
@@ -543,3 +629,5 @@ window.showGrades = showGrades;
 window.startPracticeFilter = startPracticeFilter;
 window.startMentalMath = startMentalMath;
 window.handleBackNavigation = handleBackNavigation;
+window.openNameModal = openNameModal;
+window.saveStudentName = saveStudentName;
