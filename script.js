@@ -12,7 +12,7 @@ let currentTopic = '';
 let timerInterval;
 let secondsElapsed = 0;
 let audioCtx;
-
+let userAnswers = {}; // Tracks answers per question index
 // Helper to get column data regardless of exact header casing/naming
 function getChapterName(q) {
     return q.Chapter_Number_Name || q.Topic || q.topic || "";
@@ -216,18 +216,17 @@ function startMentalMath() {
 // ============================================================
 // 🎯 PRACTICE INITIATION (NOW PROPERLY SCOPED & CLOSED)
 // ============================================================
+
 function startPractice(questions) {
     currentTopicQuestions = questions;
     currentQuestionIndex = 0;
     score = 0;
-    clearInterval(timerInterval);
-    secondsElapsed = 0;
-    document.getElementById('timer-display').innerText = "⏱️ 00:00";
-    timerInterval = setInterval(updateTimerDisplay, 1000);
+    userAnswers = {}; // Reset previous quiz answer history
     updateScoreDisplay();
-    loadQuestion();
     showView('practice');
-} // 👈 Properly closed here! No more scope traps.
+    loadQuestion();
+}
+
 function quitPractice() {
     clearInterval(timerInterval);
     showQuestionTypes(currentTopic, currentPendingQuestions);
@@ -313,9 +312,20 @@ function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType)
     const fb = document.getElementById('feedback-container');
     fb.classList.remove('hidden', 'bg-green-100', 'bg-red-100');
     
-    if (isCorrect) {
-        score++;
-        updateScoreDisplay();
+ // Record true/false for this specific question index
+userAnswers[currentQuestionIndex] = isCorrect;
+
+// Calculate total score based on unique correct answers
+score = Object.values(userAnswers).filter(isAnsCorrect => isAnsCorrect === true).length;
+updateScoreDisplay();
+
+if (isCorrect) {
+    playSound('correct');
+    fb.classList.add('bg-green-100');
+    document.getElementById('feedback-message').innerText = '✅ Correct!';
+} else {
+    // ...
+    
         playSound('correct');
         fb.classList.add('bg-green-100');
         document.getElementById('feedback-message').innerText = '✅ Correct!';
