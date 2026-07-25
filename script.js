@@ -218,39 +218,63 @@ function showGrades() {
     }
     showView('grade');
 }
+// ==========================================
+// ⚡ TAB SWITCHING FOR CHAPTERS & MENTAL MATH
+// ==========================================
+function switchTopicTab(tabName) {
+    const chaptersBtn = document.getElementById('tab-chapters-btn');
+    const mentalBtn = document.getElementById('tab-mental-btn');
+    const chaptersContent = document.getElementById('tab-chapters-content');
+    const mentalContent = document.getElementById('tab-mental-content');
 
-function showTopics(selectedGrade) {
-    const navGrades = document.getElementById('nav-back-grades');
-    const navTopics = document.getElementById('nav-back-topics');
-    if (navGrades) navGrades.classList.remove('hidden');
-    if (navTopics) navTopics.classList.add('hidden');
-
-    currentGrade = selectedGrade; 
-    const titleEl = document.getElementById('selected-grade-title');
-    if (titleEl) titleEl.innerText = `Grade ${selectedGrade} - Select Chapter`;
-        
-    const gradeQuestions = allQuestions.filter(q => q.Grade == selectedGrade);
-    const topics = [...new Set(gradeQuestions.map(q => getChapterName(q)))].filter(Boolean).sort((a, b) => {
-        return a.localeCompare(b, undefined, {numeric: true, sensitivity: 'base'});
-    });   
-        
-    const container = document.getElementById('topic-buttons');
-    if (container) {
-        container.innerHTML = '';
-        container.className = "grid grid-cols-1 md:grid-cols-2 gap-4 w-full";
-        topics.forEach(topic => {
-            const btn = document.createElement('button');
-            btn.className = 'flex items-center text-left bg-white border-l-8 border-blue-600 border-t border-r border-b border-slate-200 hover:border-blue-500 hover:bg-blue-50 p-5 rounded-r-xl shadow-sm transition-all hover:scale-[1.02]';
-            btn.innerHTML = `
-                <div class="bg-blue-100 text-blue-700 rounded-lg p-3 mr-4">
-                    <i class="fas fa-book-open text-xl"></i>
-                </div>
-                <span class="font-bold text-xl text-slate-800">${topic}</span>
-            `;
-            btn.onclick = () => showQuestionTypes(topic, gradeQuestions.filter(q => getChapterName(q) === topic));
-            container.appendChild(btn);
-        });
+    if (tabName === 'chapters') {
+        chaptersBtn.className = "bg-blue-600 text-white font-bold text-xl py-3 px-6 rounded-xl shadow-md transition-all";
+        mentalBtn.className = "bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold text-xl py-3 px-6 rounded-xl transition-all";
+        chaptersContent.classList.remove('hidden');
+        mentalContent.classList.add('hidden');
+    } else {
+        mentalBtn.className = "bg-purple-600 text-white font-bold text-xl py-3 px-6 rounded-xl shadow-md transition-all";
+        chaptersBtn.className = "bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold text-xl py-3 px-6 rounded-xl transition-all";
+        chaptersContent.classList.add('hidden');
+        mentalContent.classList.remove('hidden');
     }
+}
+function showTopics(selectedGrade) {
+    document.getElementById('nav-back-grades').classList.remove('hidden');
+    document.getElementById('nav-back-topics').classList.add('hidden');
+    currentGrade = selectedGrade; 
+    document.getElementById('selected-grade-title').innerText = `Grade ${selectedGrade} - Select Chapter`;
+
+    // 1. Reset tabs default view back to Chapters
+    switchTopicTab('chapters');
+
+    // 2. Update Grade number in Mental Math tab
+    const mmGradeNum = document.getElementById('mental-math-grade-num');
+    if (mmGradeNum) mmGradeNum.innerText = selectedGrade;
+
+    const gradeQuestions = allQuestions.filter(q => q.Grade == selectedGrade);
+    
+    // Filter out 'Mental Math' from regular chapter list if present in CSV
+    const topics = [...new Set(gradeQuestions.map(q => getChapterName(q)))]
+        .filter(Boolean)
+        .filter(t => t.toLowerCase().trim() !== 'mental math')
+        .sort((a, b) => a.localeCompare(b, undefined, {numeric: true, sensitivity: 'base'}));   
+
+    const container = document.getElementById('topic-buttons');
+    container.innerHTML = '';
+    container.className = "grid grid-cols-1 md:grid-cols-2 gap-4 w-full";
+    topics.forEach(topic => {
+        const btn = document.createElement('button');
+        btn.className = 'flex items-center text-left bg-white border-l-8 border-blue-600 border-t border-r border-b border-slate-200 hover:border-blue-500 hover:bg-blue-50 p-5 rounded-r-xl shadow-sm transition-all hover:scale-[1.02]';
+        btn.innerHTML = `
+            <div class="bg-blue-100 text-blue-700 rounded-lg p-3 mr-4">
+                <i class="fas fa-book-open text-xl"></i>
+            </div>
+            <span class="font-bold text-xl text-slate-800">${topic}</span>
+        `;
+        btn.onclick = () => showQuestionTypes(topic, gradeQuestions.filter(q => getChapterName(q) === topic));
+        container.appendChild(btn);
+    });
     showView('topic');
 }
 
@@ -322,22 +346,28 @@ function updateTimerDisplay() {
     if (timerEl) timerEl.innerText = `⏱️ ${formatTime(secondsElapsed)}`;
 }
 
-function startMentalMath() {
-    const mmQuestions = allQuestions.filter(q => {
-        const g = q.Grade || q.grade;
-        return g && String(g).trim().toLowerCase() === 'mental math';
+function startMentalMathForGrade(grade) {
+    // 1. Look for questions assigned to this grade with Chapter/Topic named "Mental Math"
+    let mmQuestions = allQuestions.filter(q => {
+        const isGrade = (q.Grade == grade || q.grade == grade);
+        const chapter = getChapterName(q).toLowerCase();
+        return isGrade && chapter.includes('mental math');
     });
 
+    // 2. Fallback: If no specific "Mental Math" chapter exists for this grade, pull all questions for this grade
     if (mmQuestions.length === 0) {
-        alert("No Mental Math questions found! Ensure 'Mental Math' is typed in the Grade column of your sheet.");
+        mmQuestions = allQuestions.filter(q => q.Grade == grade || q.grade == grade);
+    }
+
+    if (mmQuestions.length === 0) {
+        alert(`No Mental Math questions found for Grade ${grade}.`);
         return;
     }
 
-    currentTopic = "Mental Math Arena";
+    currentTopic = `Grade ${grade} Mental Math`;
     currentPendingQuestions = mmQuestions;
     startPractice(mmQuestions);
 }
-
 // ============================================================
 // 🎯 PRACTICE INITIATION
 // ============================================================
@@ -360,10 +390,9 @@ function startPractice(questions) {
 }
 
 function quitPractice() {
-    if (timerInterval) clearInterval(timerInterval);
-    if (currentTopic === "Mental Math Arena") {
-        showGrades(); 
-    } else if (typeof currentGrade !== 'undefined' && currentGrade) {
+    if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
+    
+    if (currentGrade) {
         showTopics(currentGrade);
     } else {
         showGrades();
@@ -626,3 +655,5 @@ window.startMentalMath = startMentalMath;
 window.handleBackNavigation = handleBackNavigation;
 window.openNameModal = openNameModal;
 window.saveStudentName = saveStudentName;
+window.switchTopicTab = switchTopicTab;
+window.startMentalMathForGrade = startMentalMathForGrade;
