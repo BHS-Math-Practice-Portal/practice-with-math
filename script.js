@@ -466,22 +466,37 @@ function loadQuestion() {
 }
 
 function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType) {
+    // 🛑 STOP: Ignore click if this question has already been answered
+    if (userAnswers[currentQuestionIndex] !== undefined) return;
     const sel = String(selectedText || '').trim().toLowerCase();
     const cor = String(correctText || '').trim().toLowerCase();
     const isCorrect = sel === cor;
 
+    // 1. Lock Options based on Question Type
     if (qType === 'MCQ' || qType === 'TF') {
         document.querySelectorAll('.option-btn').forEach(btn => {
-            btn.onclick = null;
+            btn.onclick = null; // Remove click handlers
             btn.classList.add('opacity-70');
             if (btn.innerText.trim().toLowerCase() === cor) {
                 btn.classList.remove('opacity-70', 'bg-slate-50', 'border-slate-200');
                 btn.classList.add('bg-green-100', 'border-green-500', 'text-green-900');
             }
         });
+    } else if (qType === 'FIB') {
+        const input = document.getElementById('fib-input');
+        const sub = document.getElementById('fib-submit');
+        if (input) input.disabled = true;
+        if (sub) {
+            sub.disabled = true;
+            sub.onclick = null;
+            sub.classList.add('opacity-50', 'cursor-not-allowed');
+        }
     }
 
-    // GAMIFICATION LOGIC
+    // 2. Save the answer state (Crucial for the guard clause in Step 1!)
+    userAnswers[currentQuestionIndex] = isCorrect;
+
+   // GAMIFICATION LOGIC
     if (isCorrect) {
         currentStreak++;
         const xpEarned = 10 + (currentStreak * 2); // Bonus XP for streaks
