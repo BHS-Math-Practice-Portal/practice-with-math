@@ -13,7 +13,7 @@ let currentTopic = '';
 let timerInterval;
 let secondsElapsed = 0;
 let audioCtx;
-let userAnswers = {}; // Tracks answers per question index
+let userAnswers = {}; // Tracks full answer state per question index
 
 // ==========================================
 // 📡 DEDICATED STUDENT SCORES WEB APP URL
@@ -96,7 +96,6 @@ function sendScoreToDatabase() {
     });
 }
 
-// Helper to get column data regardless of exact header casing/naming
 function getChapterName(q) {
     return q.Chapter_Number_Name || q.Topic || q.topic || "";
 }
@@ -168,7 +167,7 @@ function preloadImages(questionsArray) {
 }
 
 function init() {
-    checkStudentName(); // Checks or prompts for student name
+    checkStudentName();
 
     const loadingScreen = document.getElementById('loading-screen');
     if (loadingScreen) loadingScreen.classList.remove('hidden');
@@ -199,7 +198,6 @@ function showGrades() {
     if (navGrades) navGrades.classList.add('hidden');
     if (navTopics) navTopics.classList.add('hidden');
 
-    // Filter out non-numeric values so "Mental Math" doesn't create a normal Grade button
     const grades = [...new Set(allQuestions.map(q => q.Grade || q.grade))]
         .filter(g => g !== null && g !== undefined && !isNaN(Number(g)) && String(g).trim() !== '')
         .map(g => Number(g))
@@ -218,9 +216,7 @@ function showGrades() {
     }
     showView('grade');
 }
-// ==========================================
-// ⚡ TAB SWITCHING FOR CHAPTERS & MENTAL MATH
-// ==========================================
+
 function switchTopicTab(tabName) {
     const chaptersBtn = document.getElementById('tab-chapters-btn');
     const mentalBtn = document.getElementById('tab-mental-btn');
@@ -239,22 +235,20 @@ function switchTopicTab(tabName) {
         mentalContent.classList.remove('hidden');
     }
 }
+
 function showTopics(selectedGrade) {
     document.getElementById('nav-back-grades').classList.remove('hidden');
     document.getElementById('nav-back-topics').classList.add('hidden');
     currentGrade = selectedGrade; 
     document.getElementById('selected-grade-title').innerText = `Grade ${selectedGrade} - Select Chapter`;
 
-    // 1. Reset tabs default view back to Chapters
     switchTopicTab('chapters');
 
-    // 2. Update Grade number in Mental Math tab
     const mmGradeNum = document.getElementById('mental-math-grade-num');
     if (mmGradeNum) mmGradeNum.innerText = selectedGrade;
 
     const gradeQuestions = allQuestions.filter(q => q.Grade == selectedGrade);
     
-    // Filter out 'Mental Math' from regular chapter list if present in CSV
     const topics = [...new Set(gradeQuestions.map(q => getChapterName(q)))]
         .filter(Boolean)
         .filter(t => t.toLowerCase().trim() !== 'mental math')
@@ -347,14 +341,12 @@ function updateTimerDisplay() {
 }
 
 function startMentalMathForGrade(grade) {
-    // 1. Look for questions assigned to this grade with Chapter/Topic named "Mental Math"
     let mmQuestions = allQuestions.filter(q => {
         const isGrade = (q.Grade == grade || q.grade == grade);
         const chapter = getChapterName(q).toLowerCase();
         return isGrade && chapter.includes('mental math');
     });
 
-    // 2. Fallback: If no specific "Mental Math" chapter exists for this grade, pull all questions for this grade
     if (mmQuestions.length === 0) {
         mmQuestions = allQuestions.filter(q => q.Grade == grade || q.grade == grade);
     }
@@ -368,9 +360,6 @@ function startMentalMathForGrade(grade) {
     currentPendingQuestions = mmQuestions;
     startPractice(mmQuestions);
 }
-// ============================================================
-// 🎯 PRACTICE INITIATION
-// ============================================================
 
 function startPractice(questions) {
     currentTopicQuestions = questions;
@@ -379,7 +368,6 @@ function startPractice(questions) {
     currentStreak = 0;
     userAnswers = {}; 
     
-    // Timer setup
     if (timerInterval) clearInterval(timerInterval);
     secondsElapsed = 0;
     timerInterval = setInterval(updateTimerDisplay, 1000);
@@ -401,6 +389,7 @@ function quitPractice() {
 
 function loadQuestion() {
     const q = currentTopicQuestions[currentQuestionIndex];
+    const previousAnswer = userAnswers[currentQuestionIndex];
     
     const fb = document.getElementById('feedback-container');
     const nextBtn = document.getElementById('next-btn');
@@ -437,7 +426,9 @@ function loadQuestion() {
             const btn = document.createElement('button');
             btn.className = 'option-btn text-left bg-slate-50 border-4 border-slate-200 hover:border-blue-500 hover:bg-blue-50 text-2xl font-bold py-5 px-6 rounded-xl w-full transition-colors';
             btn.innerText = opt;
-            btn.onclick = () => checkAnswer(btn, opt, q.Correct_Answer, q.Explanation, 'MCQ');
+            if (!previousAnswer) {
+                btn.onclick = () => checkAnswer(btn, opt, q.Correct_Answer, q.Explanation, 'MCQ');
+            }
             optionsContainer.appendChild(btn);
         });
     } else if (qType === 'TF' || qType === 'T/F') {
@@ -446,37 +437,53 @@ function loadQuestion() {
             const btn = document.createElement('button');
             btn.className = 'option-btn text-center bg-slate-50 border-4 border-slate-200 hover:border-blue-500 hover:bg-blue-50 text-2xl font-bold py-5 px-6 rounded-xl w-full transition-colors';
             btn.innerText = opt;
-            btn.onclick = () => checkAnswer(btn, opt, q.Correct_Answer, q.Explanation, 'TF');
+            if (!previousAnswer) {
+                btn.onclick = () => checkAnswer(btn, opt, q.Correct_Answer, q.Explanation, 'TF');
+            }
             optionsContainer.appendChild(btn);
         });
- 
     } else if (qType === 'FIB') {
-    optionsContainer.className = "block w-full";
-    optionsContainer.innerHTML = `
-        <input type="text" id="fib-input" placeholder="Type answer here..." class="w-full text-2xl font-bold py-5 px-6 rounded-xl border-4 border-slate-300 focus:border-blue-500 mb-4 text-center outline-none">
-        <button id="fib-submit" class="w-full md:w-1/2 mx-auto block bg-blue-600 text-white font-bold py-4 rounded-xl text-xl shadow-md hover:bg-blue-700 transition-colors">Submit</button>
-    `;
-    const input = document.getElementById('fib-input');
-    const sub = document.getElementById('fib-submit');
-    
-    if (sub && input) {
-        const handleFibSubmit = () => {
-            if (!input.value.trim() || input.disabled) return;
-            input.disabled = true;
-            sub.disabled = true;
-            sub.classList.add('opacity-50', 'cursor-not-allowed');
-            checkAnswer(null, input.value, q.Correct_Answer, q.Explanation, 'FIB');
-        };
+        optionsContainer.className = "block w-full";
+        optionsContainer.innerHTML = `
+            <input type="text" id="fib-input" placeholder="Type answer here..." class="w-full text-2xl font-bold py-5 px-6 rounded-xl border-4 border-slate-300 focus:border-blue-500 mb-4 text-center outline-none">
+            <button id="fib-submit" class="w-full md:w-1/2 mx-auto block bg-blue-600 text-white font-bold py-4 rounded-xl text-xl shadow-md hover:bg-blue-700 transition-colors">Submit</button>
+        `;
+        const input = document.getElementById('fib-input');
+        const sub = document.getElementById('fib-submit');
+        
+        if (sub && input) {
+            if (!previousAnswer) {
+                const handleFibSubmit = () => {
+                    if (!input.value.trim() || input.disabled) return;
+                    input.disabled = true;
+                    sub.disabled = true;
+                    sub.classList.add('opacity-50', 'cursor-not-allowed');
+                    checkAnswer(null, input.value, q.Correct_Answer, q.Explanation, 'FIB');
+                };
 
-        sub.onclick = handleFibSubmit;
-        input.addEventListener('keypress', (e) => { 
-            if (e.key === 'Enter') handleFibSubmit(); 
-        });
-        setTimeout(() => input.focus(), 100);
+                sub.onclick = handleFibSubmit;
+                input.addEventListener('keypress', (e) => { 
+                    if (e.key === 'Enter') handleFibSubmit(); 
+                });
+                setTimeout(() => input.focus(), 100);
+            } else {
+                input.value = previousAnswer.selectedText;
+                input.disabled = true;
+                sub.disabled = true;
+                sub.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
     }
-}
-    
+
+    if (previousAnswer) {
+        restoreAnswerState(previousAnswer, q);
+    }
+} // 👈 Fixed missing closing brace for loadQuestion()
+
 function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType) {
+    // 🛡️ Strict Guard: prevent duplicate submissions
+    if (userAnswers[currentQuestionIndex] !== undefined) return;
+
     const sel = String(selectedText || '').trim().toLowerCase();
     const cor = String(correctText || '').trim().toLowerCase();
     const isCorrect = sel === cor;
@@ -492,18 +499,24 @@ function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType)
         });
     }
 
-    // GAMIFICATION LOGIC
     if (isCorrect) {
         currentStreak++;
-        const xpEarned = 10 + (currentStreak * 2); // Bonus XP for streaks
+        const xpEarned = 10 + (currentStreak * 2);
         totalXP += xpEarned;
         playerLevel = Math.floor(totalXP / 50) + 1;
     } else {
-        currentStreak = 0; // Reset streak on mistake
+        currentStreak = 0;
     }
 
-    userAnswers[currentQuestionIndex] = isCorrect;
-    score = Object.values(userAnswers).filter(isAns => isAns === true).length;
+    userAnswers[currentQuestionIndex] = {
+        selectedText: selectedText,
+        isCorrect: isCorrect,
+        correctText: correctText,
+        explanation: explanation,
+        qType: qType
+    };
+
+    score = Object.values(userAnswers).filter(ans => ans && ans.isCorrect).length;
     updateScoreDisplay();
 
     const fb = document.getElementById('feedback-container');
@@ -527,6 +540,44 @@ function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType)
 
     if (expText) {
         expText.innerText = explanation ? `Explanation: ${explanation}` : '';
+    }
+
+    if (nextBtn) nextBtn.classList.remove('hidden');
+}
+
+function restoreAnswerState(answerRecord, q) {
+    const cor = String(answerRecord.correctText || q.Correct_Answer || '').trim().toLowerCase();
+    const qType = answerRecord.qType;
+
+    if (qType === 'MCQ' || qType === 'TF') {
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.onclick = null;
+            btn.classList.add('opacity-70');
+            if (btn.innerText.trim().toLowerCase() === cor) {
+                btn.classList.remove('opacity-70', 'bg-slate-50', 'border-slate-200');
+                btn.classList.add('bg-green-100', 'border-green-500', 'text-green-900');
+            }
+        });
+    }
+
+    const fb = document.getElementById('feedback-container');
+    const fbMsg = document.getElementById('feedback-message');
+    const expText = document.getElementById('explanation-text');
+    const nextBtn = document.getElementById('next-btn');
+
+    if (fb) {
+        fb.classList.remove('hidden', 'bg-green-100', 'bg-red-100');
+        if (answerRecord.isCorrect) {
+            fb.classList.add('bg-green-100');
+            if (fbMsg) fbMsg.innerText = `✅ Correct!`;
+        } else {
+            fb.classList.add('bg-red-100');
+            if (fbMsg) fbMsg.innerText = qType === 'FIB' ? `❌ Incorrect. Answer: ${q.Correct_Answer}` : '❌ Incorrect';
+        }
+    }
+
+    if (expText) {
+        expText.innerText = answerRecord.explanation ? `Explanation: ${answerRecord.explanation}` : '';
     }
 
     if (nextBtn) nextBtn.classList.remove('hidden');
@@ -557,7 +608,6 @@ function updateScoreDisplay() {
     const hudScore = document.getElementById('hud-score');
     if (hudScore) hudScore.innerText = score;
 
-    // Gamification HUD Updates (if elements exist in HTML)
     const xpDisplay = document.getElementById('hud-xp');
     if (xpDisplay) xpDisplay.innerText = `${totalXP} XP`;
 
@@ -577,7 +627,6 @@ function triggerConfetti(options) {
 function showFinalScore() {
     if (timerInterval) clearInterval(timerInterval);
 
-    // 📡 SILENTLY LOG STUDENT RESULTS TO YOUR DEDICATED SHEET
     sendScoreToDatabase();
 
     const finalScore = document.getElementById('final-score');
