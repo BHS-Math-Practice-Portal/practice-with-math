@@ -449,22 +449,33 @@ function loadQuestion() {
             btn.onclick = () => checkAnswer(btn, opt, q.Correct_Answer, q.Explanation, 'TF');
             optionsContainer.appendChild(btn);
         });
+ 
     } else if (qType === 'FIB') {
-        optionsContainer.className = "block w-full";
-        optionsContainer.innerHTML = `
-            <input type="text" id="fib-input" placeholder="Type answer here..." class="w-full text-2xl font-bold py-5 px-6 rounded-xl border-4 border-slate-300 focus:border-blue-500 mb-4 text-center outline-none">
-            <button id="fib-submit" class="w-full md:w-1/2 mx-auto block bg-blue-600 text-white font-bold py-4 rounded-xl text-xl shadow-md hover:bg-blue-700 transition-colors">Submit</button>
-        `;
-        const input = document.getElementById('fib-input');
-        const sub = document.getElementById('fib-submit');
-        if (sub && input) {
-            sub.onclick = () => checkAnswer(null, input.value, q.Correct_Answer, q.Explanation, 'FIB');
-            input.addEventListener('keypress', (e) => { if(e.key === 'Enter') sub.click(); });
-            setTimeout(() => input.focus(), 100);
-        }
+    optionsContainer.className = "block w-full";
+    optionsContainer.innerHTML = `
+        <input type="text" id="fib-input" placeholder="Type answer here..." class="w-full text-2xl font-bold py-5 px-6 rounded-xl border-4 border-slate-300 focus:border-blue-500 mb-4 text-center outline-none">
+        <button id="fib-submit" class="w-full md:w-1/2 mx-auto block bg-blue-600 text-white font-bold py-4 rounded-xl text-xl shadow-md hover:bg-blue-700 transition-colors">Submit</button>
+    `;
+    const input = document.getElementById('fib-input');
+    const sub = document.getElementById('fib-submit');
+    
+    if (sub && input) {
+        const handleFibSubmit = () => {
+            if (!input.value.trim() || input.disabled) return;
+            input.disabled = true;
+            sub.disabled = true;
+            sub.classList.add('opacity-50', 'cursor-not-allowed');
+            checkAnswer(null, input.value, q.Correct_Answer, q.Explanation, 'FIB');
+        };
+
+        sub.onclick = handleFibSubmit;
+        input.addEventListener('keypress', (e) => { 
+            if (e.key === 'Enter') handleFibSubmit(); 
+        });
+        setTimeout(() => input.focus(), 100);
     }
 }
-
+    
 function checkAnswer(selectedBtn, selectedText, correctText, explanation, qType) {
     const sel = String(selectedText || '').trim().toLowerCase();
     const cor = String(correctText || '').trim().toLowerCase();
@@ -651,7 +662,6 @@ window.quitPractice = quitPractice;
 window.showTopics = showTopics;
 window.showGrades = showGrades;
 window.startPracticeFilter = startPracticeFilter;
-window.startMentalMath = startMentalMath;
 window.handleBackNavigation = handleBackNavigation;
 window.openNameModal = openNameModal;
 window.saveStudentName = saveStudentName;
